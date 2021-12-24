@@ -1,0 +1,21 @@
+pull_request_ruls:
+  - name: merge jika semua require sudah terpenuhi
+    conditions:
+      - base=main
+      - label=ready-to-merge
+    actions:
+      comment:
+        message: terim kasih atas kontribusinya @{{ author }}!
+      label:
+        add:
+          - sudah di review!
+      
+      merge:
+        method: squash
+
+  - name: label python
+    conditions:
+    - files~=\.py$
+    actions:
+    label:
+      - file python
