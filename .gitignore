@@ -1,3 +1,5 @@
+# gitignore generate dari github untuk python
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
