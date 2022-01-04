@@ -14,3 +14,6 @@ yarn-error/log*
 
 # kalo menggunakan intelliJ dari workspace folder
 .idea
+
+# env
+.env
