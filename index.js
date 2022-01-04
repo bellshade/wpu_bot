@@ -3,6 +3,7 @@ const { Client, Intents } = require("discord.js");
 const { Filters } = require("./modules/filters.js");
 const { Public } = require("./modules/public.js");
 const { Stickers } = require("./modules/stickers.js");
+const { Timeout } = require("./modules/timeout.js");
 const main = () => {
   const client = new Client({
     intents: [
@@ -24,6 +25,8 @@ const main = () => {
     Stickers(msg, client);
 
     Filters(msg, client);
+
+    Timeout(msg, client);
   });
 
   client.login(process.env.TOKEN);

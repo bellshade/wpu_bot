@@ -9,10 +9,10 @@ const Filters = async (msg) => {
 
   const filterEmbed = new MessageEmbed()
     .setColor("#992d22")
-    .setAuthor(
-      `${msg.author.username}`,
-      `${msg.author.displayAvatarURL({ dynamic: true })}`
-    )
+    .setAuthor({
+      name: `${msg.author.username}`,
+      iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
+    })
     .setDescription(`**reply to:** ${msg.content}`);
 
   split.some((s) => {
