@@ -30,15 +30,15 @@ const main = () => {
     
     Public(msg, client); // Public Scope Command
 
-    Stickers(msg, client);
+        Stickers(msg, client);
 
-    Filters(msg, client);
+        Filters(msg, client);
 
     Timeout(msg, client);
 
   });
 
-  client.login(process.env.TOKEN);
+    client.login(process.env.TOKEN);
 };
 
 main();
