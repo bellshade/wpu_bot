@@ -3,7 +3,7 @@ const Discord = require("discord.js");
 
 const { embedError, checkRoles, deleteMsg, sendMsg } = require("./utility.js");
 
-const Public = (msg) => {
+const Public = async (msg) => {
   const split = msg.content.split(/ +/);
   const command = split[0].toLowerCase();
   const args = split.slice(1);
