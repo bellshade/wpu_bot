@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model messages {
+  id          BigInt   @id @default(autoincrement())
+  author_id   String?  @db.VarChar(255)
+  channel_id  String?  @db.VarChar(255)
+  message_id  String   @default("CURRENT_TIMESTAMP") @db.VarChar(255)
+  messages    String?  @db.LongText
+  attachments String?  @db.LongText
+  timestamp   DateTime @default(now()) @db.Timestamp(0)
+}
+
+model perkenalan {
+  id                            BigInt   @id @default(autoincrement())
+  author_id                     String?  @db.VarChar(255)
+  channel_id                    String?  @db.VarChar(255)
+  message_id                    String?  @db.VarChar(255)
+  message_content               String?  @db.LongText
+  nama                          String?  @db.Text
+  asal                          String?  @db.Text
+  sekolah                       String?  @db.Text
+  bekerja                       String?  @db.Text
+  referal                       String?  @db.Text
+  favorite_programing_language  String?  @db.Text
+  hobby                         String?  @db.Text
+}

@@ -7,4 +7,4 @@
 
 Bot yang digunakan untuk server wpu
 
-Creator : @manh21, @dhafitf.
+Creator : [@manh21](https://github.com/manh21), [@dhafitf](https://github.com/dhafitf).
