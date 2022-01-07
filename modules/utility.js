@@ -3,18 +3,14 @@ const { MessageEmbed } = require("discord.js");
 
 function checkRoles(msg) {
   // Check if they have one of many roles
-  if (
-    msg.member.roles.cache.some((role) =>
-      JSON.parse(process.env.ROLE).includes(role.id)
-    )
-  ) {
+  if ( msg.member.roles.cache.some((role) => JSON.parse(process.env.ROLE).includes(role.id) ) ) {
     return true;
-  } else {
-    return false;
   }
+
+  return false;
 }
 
-function getUserFromMention(mention) {
+function getUserFromMention(mention, client) {
   if (!mention) return false;
 
   if (mention.startsWith("<@") && mention.endsWith(">")) {
@@ -24,8 +20,10 @@ function getUserFromMention(mention) {
       mention = mention.slice(1);
     }
 
-    return new Discord.Client().users.cache.get(mention);
+    return client.users.fetch(mention);
   }
+
+  return false;
 }
 
 function embedError(msg = "Error") {
@@ -57,10 +55,6 @@ function embedLog(msg = "", title = "Server Log", mention = "") {
     .setTimestamp();
 }
 
-function reportPlayer(msg = "", mention = "") {
-  return msg + "\n" + mention;
-}
-
 function makeRoleMentions(rolesId = []) {
   let roles = [];
   if (rolesId == undefined || rolesId == null) return;
@@ -90,6 +84,44 @@ function deleteMsg(msg) {
   }
 }
 
+function replyEmbedError(msg, error) {
+  return new MessageEmbed()
+    .setDescription(`:x: <@${msg.author.id}>, ${error}`)
+    .setColor("RED");
+}
+
+function splitMessages(msg, withPrefix = false) {
+  let command, args;
+  if(withPrefix) {
+    const split = msg.content.split(/ +/);
+    command = split[0].toLowerCase();
+    args = split.slice(1);
+  } else {
+    const withoutPrefix = msg.content.slice(process.env.PREFIX.length);
+    const split = withoutPrefix.split(/ +/);
+    command = split[0].toLowerCase();
+    args = split.slice(1);
+  }
+
+  return { command, args };
+}
+
+function checkPermission(msg, guildMember) {
+  const errorMsg = `You can't do this to user with the same or a higher role.`;
+  return new Promise((resolve, reject) => {
+    if ( 
+      guildMember.roles.highest.position >= msg.guild.me.roles.highest.position 
+      || msg.member.roles.highest.position 
+      || msg.guild.ownerId == guildMember.id
+    ) {
+      sendMsg(msg.channel, { embeds: [replyEmbedError(msg, errorMsg)] });
+      resolve(false);
+    } else {
+      resolve(true);
+    }
+  });
+}
+
 module.exports = {
   checkRoles,
   embedError,
@@ -98,7 +130,8 @@ module.exports = {
   embedLog,
   getUserFromMention,
   makeRoleMentions,
-  reportPlayer,
   sendMsg,
   deleteMsg,
+  splitMessages,
+  checkPermission
 };
