@@ -1,6 +1,5 @@
 require('dotenv').config();
 const { MessageEmbed } = require('discord.js');
-const Discord = require('discord.js');
 
 function checkRoles(msg) {
     // Check if they have one of many roles
