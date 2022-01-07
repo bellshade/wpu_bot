@@ -25,8 +25,10 @@ const main = () => {
   });
 
   client.on("messageCreate", (msg) => {
-    // Public Scope Command
-    Public(msg, client);
+
+    Analytics(msg, client, prisma) // Always load this first
+    
+    Public(msg, client); // Public Scope Command
 
     Stickers(msg, client);
 
@@ -34,7 +36,6 @@ const main = () => {
 
     Timeout(msg, client);
 
-    Analytics(msg, client, prisma)
   });
 
   client.login(process.env.TOKEN);
