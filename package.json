@@ -4,12 +4,18 @@
   "description": "dev for wpu-bot",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint ./ --ignore-path .gitignore",
+    "lint:fix": "npm run lint -- --fix"
   },
   "author": "dhafitf",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^13.5.0",
     "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.6.0"
   }
 }
