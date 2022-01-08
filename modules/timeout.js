@@ -39,8 +39,8 @@ const Timeout = async (msg, client) => {
         const duration = parseInt(args[0].slice(0, -1)) || 0;
         const durationMs = Math.floor(duration * (timeCalc[timeType] || 1) * 1000); // Covert duration to miliseconds
         // check apakah durasi melebihi batas maksimum
-        if(durationMs > 2419200001 ) {
-            msg.reply("Maximal timeout is 28d");
+        if(durationMs >= 2419200000 ) {
+            msg.reply("Maximal timeout is 27d");
             return;
         }
 
