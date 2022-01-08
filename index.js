@@ -6,18 +6,24 @@ const { Public } = require("./modules/public.js");
 const { Stickers } = require("./modules/stickers.js");
 const { Timeout } = require("./modules/timeout.js");
 const { PrismaClient }= require("@prisma/client");
+const { Join, Perkenalan } = require("./modules/perkenalan.js");
 
-const intent = {
+const options = {
     intents: [
         Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MEMBERS,
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
     ],
+    allowedMentions: {
+        parse: ['users', 'roles']
+    }
 };
 
 const main = () => {
     const prisma = new PrismaClient();
-    const client = new Client(intent);
+    const client = new Client(options);
 
     client.on("ready", () => {
         console.info(`Logged in as ${client.user.tag}!`);
@@ -36,6 +42,11 @@ const main = () => {
 
         Timeout(msg, client);
 
+        Perkenalan(msg, client, prisma);
+    });
+
+    client.on("guildMemberAdd", async (guildMember) => {
+        Join(guildMember, client);
     });
 
     client.login(process.env.TOKEN);
