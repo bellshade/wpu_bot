@@ -116,7 +116,7 @@ function splitMessages(msg, withPrefix = false) {
 function checkPermission(msg, guildMember) {
     const errorMsg = `You can't do this to user with the same or a higher role.`;
     return new Promise((resolve) => {
-        if ( guildMember.roles.highest.position >= msg.guild.me.roles.highest.position || msg.member.roles.highest.position || msg.guild.ownerId == guildMember.id) {
+        if ( guildMember.roles.highest.position >= msg.guild.me.roles.highest.position && msg.member.roles.highest.position || msg.guild.ownerId == guildMember.id) {
             sendMsg(msg.channel, { embeds: [replyEmbedError(msg, errorMsg)] });
             resolve(false);
         } else {
