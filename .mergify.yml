@@ -1,4 +1,4 @@
-pull_request_ruls:
+pull_request_rules:
   - name: merge jika semua require sudah terpenuhi
     conditions:
       - base=main
