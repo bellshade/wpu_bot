@@ -76,6 +76,13 @@ function sendMsg(channel, msg) {
     }
 }
 
+function sendTempMsg(channel, msg) {
+    channel.send(msg).then(async (wMsg) => {
+        await new Promise((r) => setTimeout(r, 5000)); // Sleep for 5 seconds
+        deleteMsg(wMsg);
+    }).catch((e) => console.error(e));
+}
+
 function deleteMsg(msg) {
     try {
         msg.delete();
@@ -127,6 +134,7 @@ module.exports = {
     getUserFromMention,
     makeRoleMentions,
     sendMsg,
+    sendTempMsg,
     deleteMsg,
     splitMessages,
     checkPermission
