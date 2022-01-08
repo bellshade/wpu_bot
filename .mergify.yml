@@ -1,7 +1,8 @@
-pull_request_ruls:
+pull_request_rules:
   - name: merge jika semua require sudah terpenuhi
     conditions:
       - base=main
+      - "#approved-reviews-by>=1"
       - label=ready-to-merge
     actions:
       comment:
@@ -9,13 +10,5 @@ pull_request_ruls:
       label:
         add:
           - sudah di review!
-      
       merge:
-        method: squash
-
-  - name: label python
-    conditions:
-    - files~=\.py$
-    actions:
-    label:
-      - file python
+        method: merge
