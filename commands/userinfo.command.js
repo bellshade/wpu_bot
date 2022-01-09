@@ -21,7 +21,7 @@ exports.execute = async (interaction) => {
         memberRoles = !member.roles ? "None" : member._roles.map((role) => `<@&${role}>`);
 
         customStatus = 'None';
-        if(!member.presence && member.presence.activities[0]) {
+        if(!member.presence && member.presence.activities && member.presence.activities[0]) {
             customStatus = member.presence.activities[0].state;
         }
 
