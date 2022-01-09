@@ -1,9 +1,13 @@
-require('dotenv').config();
-const { MessageEmbed } = require('discord.js');
+require("dotenv").config();
+const { MessageEmbed } = require("discord.js");
 
 function checkRoles(msg) {
     // Check if they have one of many roles
-    if ( msg.member.roles.cache.some((role) => JSON.parse(process.env.ROLE).includes(role.id) ) ) {
+    if (
+        msg.member.roles.cache.some((role) =>
+            JSON.parse(process.env.ROLE).includes(role.id)
+        )
+    ) {
         return true;
     }
 
@@ -13,10 +17,10 @@ function checkRoles(msg) {
 function getUserFromMention(mention, client) {
     if (!mention) return false;
 
-    if (mention.startsWith('<@') && mention.endsWith('>')) {
+    if (mention.startsWith("<@") && mention.endsWith(">")) {
         mention = mention.slice(2, -1);
 
-        if (mention.startsWith('!')) {
+        if (mention.startsWith("!")) {
             mention = mention.slice(1);
         }
 
@@ -26,32 +30,32 @@ function getUserFromMention(mention, client) {
     return false;
 }
 
-function embedError(msg = 'Error') {
+function embedError(msg = "Error") {
     return new MessageEmbed()
         .setDescription(`:x: ${msg}`)
-        .setColor('RED')
+        .setColor("RED")
         .setTimestamp();
 }
 
-function embedSuccess(msg = 'Success') {
+function embedSuccess(msg = "Success") {
     return new MessageEmbed()
         .setDescription(`:white_check_mark: ${msg}`)
-        .setColor('GREEN')
+        .setColor("GREEN")
         .setTimestamp();
 }
 
-function embedMsg(msg = '') {
+function embedMsg(msg = "") {
     return new MessageEmbed()
         .setDescription(`${msg}`)
-        .setColor('NOT_QUITE_BLACK')
+        .setColor("NOT_QUITE_BLACK")
         .setTimestamp();
 }
 
-function embedLog(msg = '', title = 'Server Log', mention = '') {
+function embedLog(msg = "", title = "Server Log", mention = "") {
     return new MessageEmbed()
         .setTitle(title)
         .setDescription(`\`\`\`${msg}\`\`\`${mention}`)
-        .setColor('NOT_QUITE_BLACK')
+        .setColor("NOT_QUITE_BLACK")
         .setTimestamp();
 }
 
@@ -60,12 +64,12 @@ function makeRoleMentions(rolesId = []) {
     if (rolesId == undefined || rolesId == null) return;
     for (let i = 0; i < rolesId.length; i++) {
         const role = rolesId[i];
-        if (role == undefined || role == null || role == '') {
+        if (role == undefined || role == null || role == "") {
             continue;
         }
         roles.push(`<@&${role}>`);
     }
-    return roles.join(' ');
+    return roles.join(" ");
 }
 
 function sendMsg(channel, msg) {
@@ -77,10 +81,13 @@ function sendMsg(channel, msg) {
 }
 
 function sendTempMsg(channel, msg) {
-    channel.send(msg).then(async (wMsg) => {
-        await new Promise((r) => setTimeout(r, 5000)); // Sleep for 5 seconds
-        deleteMsg(wMsg);
-    }).catch((e) => console.error(e));
+    channel
+        .send(msg)
+        .then(async (wMsg) => {
+            await new Promise((r) => setTimeout(r, 5000)); // Sleep for 5 seconds
+            deleteMsg(wMsg);
+        })
+        .catch((e) => console.error(e));
 }
 
 function deleteMsg(msg) {
@@ -99,7 +106,7 @@ function replyEmbedError(msg, error) {
 
 function splitMessages(msg, withPrefix = false) {
     let command, args;
-    if(withPrefix) {
+    if (withPrefix) {
         const split = msg.content.split(/ +/);
         command = split[0].toLowerCase();
         args = split.slice(1);
@@ -116,13 +123,83 @@ function splitMessages(msg, withPrefix = false) {
 function checkPermission(msg, guildMember) {
     const errorMsg = `You can't do this to user with the same or a higher role.`;
     return new Promise((resolve) => {
-        if ( guildMember.roles.highest.position >= msg.guild.me.roles.highest.position && msg.member.roles.highest.position || msg.guild.ownerId == guildMember.id) {
+        if (
+            guildMember.roles.highest.position >=
+        msg.guild.me.roles.highest.position &&
+        msg.member.roles.highest.position ||
+      msg.guild.ownerId == guildMember.id
+        ) {
             sendMsg(msg.channel, { embeds: [replyEmbedError(msg, errorMsg)] });
             resolve(false);
         } else {
             resolve(true);
         }
     });
+}
+
+async function getUserFromID(msg, client) {
+    try {
+        const { args } = splitMessages(msg);
+        let user = await getUserFromMention(args[0], client); //get user from mention
+        let userId;
+        if (!user) {
+            userId = args[0]; //get user by id
+            if (!userId) {
+                userId = msg.author.id; //if not mention user, author will be the user
+            }
+        } else {
+            userId = user.id; //get user id
+        }
+        let member;
+        try {
+            member = await msg.guild.members.fetch(userId);
+        } catch (error) {
+            console.error(error);
+        }
+        return member;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+async function getChannel(msg) {
+    try {
+        const { args } = splitMessages(msg);
+        let channelByID = args[0];
+        let channelID;
+        if (args[0] === undefined) {
+            channelID = msg.channel.id;
+        } else {
+            channelID = channelByID;
+        }
+        let channel;
+        try {
+            channel = await msg.guild.channels.cache.get(channelID);
+        } catch (error) {
+            console.error();
+        }
+        return channel;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function getRoleByID(msg) {
+    const { args } = splitMessages(msg);
+    let mention = msg.mentions.roles.first();
+    let roleID;
+    if (!mention) {
+        roleID = args[0];
+    } else {
+        roleID = mention.id;
+    }
+    let role;
+    try {
+        role = msg.guild.roles.cache.get(roleID);
+    } catch (error) {
+        console.error(error);
+    }
+    return role;
 }
 
 module.exports = {
@@ -137,5 +214,8 @@ module.exports = {
     sendTempMsg,
     deleteMsg,
     splitMessages,
-    checkPermission
+    checkPermission,
+    getUserFromID,
+    getChannel,
+    getRoleByID,
 };

@@ -5,8 +5,9 @@ const { Filters } = require("./modules/filters.js");
 const { Public } = require("./modules/public.js");
 const { Stickers } = require("./modules/stickers.js");
 const { Timeout } = require("./modules/timeout.js");
-const { PrismaClient }= require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
 const { Join, Perkenalan } = require("./modules/perkenalan.js");
+const { Info } = require("./modules/info.js");
 
 const options = {
     intents: [
@@ -15,10 +16,11 @@ const options = {
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILD_PRESENCES,
     ],
     allowedMentions: {
-        parse: ['users', 'roles']
-    }
+        parse: ["users", "roles"],
+    },
 };
 
 const main = () => {
@@ -31,7 +33,6 @@ const main = () => {
     });
 
     client.on("messageCreate", (msg) => {
-
         Analytics(msg, client, prisma); // Always load this first
 
         Public(msg, client); // Public Scope Command
@@ -43,6 +44,8 @@ const main = () => {
         Timeout(msg, client);
 
         Perkenalan(msg, client, prisma);
+
+        Info(msg, client);
     });
 
     client.on("guildMemberAdd", async (guildMember) => {
