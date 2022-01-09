@@ -4,6 +4,7 @@ const { Public } = require("../modules/public.js");
 const { Stickers } = require("../modules/stickers.js");
 const { Timeout } = require("../modules/timeout.js");
 const { Perkenalan } = require("../modules/perkenalan.js");
+const { Info } = require("../modules/info.js");
 
 module.exports = {
     name: 'messageCreate',
@@ -23,5 +24,7 @@ module.exports = {
         Timeout(msg, client);
 
         Perkenalan(msg, client, prisma);
+
+        Info(msg, client, prisma);
     },
 };
