@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
@@ -20,4 +21,4 @@ const deploy = () => {
         .catch(console.error);
 };
 
-module.exports = deploy;
+deploy();
