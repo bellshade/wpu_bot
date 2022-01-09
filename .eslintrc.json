@@ -6,19 +6,6 @@
     "jest": true
   },
   "extends": ["eslint:recommended"],
-  "globals": {
-    "protobuf": "readonly",
-    "CryptoJS": "readonly",
-    "JSZip": "readonly",
-    "OAuth": "readonly",
-    "PDFDocument": "readonly",
-    "HakuNeko": "readonly",
-    "Engine": "readonly",
-    "EventListener": "readonly",
-    "Connector": "readonly",
-    "ClipboardConnector": "readonly",
-    "EXIF": "readonly"
-  },
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module"
