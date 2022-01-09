@@ -13,13 +13,11 @@ exports.execute = async (interaction) => {
         const user = interaction.options.getUser('target');
         if(!user) {
             name = interaction.member.displayName;
-            avatar = interaction.member.avatarURL() ? interaction.member.avatarURL() : interaction.user.avatarURL() || 'https://cdn.discordapp.com/embed/avatars/0.png';
-            avatar = avatar.replace('webp', 'png?size=256');
+            avatar = interaction.member.displayAvatarURL({dynamic: true, size: 256});
         } else {
             const member = await interaction.guild.members.fetch(user);
             name = member.displayName;
-            avatar = member.avatarURL() ? member.avatarURL() : user.avatarURL() || 'https://cdn.discordapp.com/embed/avatars/0.png';
-            avatar = avatar.replace('webp', 'png?size=256');
+            avatar = member.displayAvatarURL({dynamic: true, size: 256});
         }
         const embed = new MessageEmbed()
             .setTitle(`${name}'s avatar.`)
