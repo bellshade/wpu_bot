@@ -56,8 +56,6 @@ const Info = async (msg, client) => {
         const voice =
       Member.voice.channelId === null ? "None" : `<#${Member.voice.channelId}>`;
         const memberRoles = Member._roles.map((role) => `<@&${role}>`);
-        const customStatus =
-      Member.presence === null ? "None" : Member.presence.activities[0].state;
         const userInfoEmbed = new MessageEmbed()
             .setColor("#992d22")
             .setTitle(`${Member.user.username}'s Informations.`)
@@ -77,11 +75,6 @@ const Info = async (msg, client) => {
                 {
                     name: "In Voice",
                     value: voice,
-                    inline: false,
-                },
-                {
-                    name: "Custom Status",
-                    value: `${customStatus}`,
                     inline: false,
                 },
                 {

@@ -137,29 +137,18 @@ function checkPermission(msg, guildMember) {
     });
 }
 
-async function getUserFromID(msg, client) {
+async function getUserFromID(msg) {
+    const { args } = splitMessages(msg);
+    let user = msg.mentions.users.first();
+    if (!user && args[0]) user = args[0];
+    if (!user) user = msg.author;
+    let member;
     try {
-        const { args } = splitMessages(msg);
-        let user = await getUserFromMention(args[0], client); //get user from mention
-        let userId;
-        if (!user) {
-            userId = args[0]; //get user by id
-            if (!userId) {
-                userId = msg.author.id; //if not mention user, author will be the user
-            }
-        } else {
-            userId = user.id; //get user id
-        }
-        let member;
-        try {
-            member = await msg.guild.members.fetch(userId);
-        } catch (error) {
-            console.error(error);
-        }
-        return member;
+        member = await msg.guild.members.fetch(user);
     } catch (error) {
         console.log(error);
     }
+    return member;
 }
 
 async function getChannel(msg) {
