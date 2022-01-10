@@ -14,20 +14,23 @@ function checkRoles(msg) {
     return false;
 }
 
-function getUserFromMention(mention, client) {
-    if (!mention) return false;
+async function getUserFromMention(mention, guild) {
+    try {
+        if (!mention) return false;
 
-    if (mention.startsWith("<@") && mention.endsWith(">")) {
-        mention = mention.slice(2, -1);
+        if (mention.startsWith("<@") && mention.endsWith(">")) {
+            mention = mention.slice(2, -1);
 
-        if (mention.startsWith("!")) {
-            mention = mention.slice(1);
+            if (mention.startsWith("!")) {
+                mention = mention.slice(1);
+            }
         }
 
-        return client.users.fetch(mention);
+        return await guild.members.fetch(mention);
+    } catch (error) {
+        console.log(error);
+        return false;
     }
-
-    return false;
 }
 
 function embedError(msg = "Error") {
@@ -137,26 +140,11 @@ function checkPermission(msg, guildMember) {
     });
 }
 
-async function getUserFromID(msg) {
-    const { args } = splitMessages(msg);
-    let user = msg.mentions.users.first();
-    if (!user && args[0]) user = args[0];
-    if (!user) user = msg.author;
-    let member;
+async function getChannelData(msg, args) {
     try {
-        member = await msg.guild.members.fetch(user);
-    } catch (error) {
-        console.log(error);
-    }
-    return member;
-}
-
-async function getChannel(msg) {
-    try {
-        const { args } = splitMessages(msg);
-        let channelByID = args[0];
+        let channelByID = args;
         let channelID;
-        if (args[0] === undefined) {
+        if (args === undefined) {
             channelID = msg.channel.id;
         } else {
             channelID = channelByID;
@@ -173,12 +161,11 @@ async function getChannel(msg) {
     }
 }
 
-async function getRoleByID(msg) {
-    const { args } = splitMessages(msg);
+async function getRoleData(msg, args) {
     let mention = msg.mentions.roles.first();
     let roleID;
     if (!mention) {
-        roleID = args[0];
+        roleID = args;
     } else {
         roleID = mention.id;
     }
@@ -204,7 +191,6 @@ module.exports = {
     deleteMsg,
     splitMessages,
     checkPermission,
-    getUserFromID,
-    getChannel,
-    getRoleByID,
+    getChannelData,
+    getRoleData,
 };

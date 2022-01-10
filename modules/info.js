@@ -3,12 +3,12 @@ const { MessageEmbed } = require("discord.js");
 const {
     splitMessages,
     sendMsg,
-    getUserFromID,
-    getChannel,
-    getRoleByID,
+    getChannelData,
+    getRoleData,
+    getUserFromMention,
 } = require("./utility");
 
-const Info = async (msg, client) => {
+const Info = async (msg) => {
     const { command } = splitMessages(msg);
 
     function replyEmbedError(error) {
@@ -23,7 +23,9 @@ const Info = async (msg, client) => {
 
     // avatar command
     if (command === "avatar") {
-        const Member = await getUserFromID(msg);
+        const { args } = splitMessages(msg);
+        let Member = await getUserFromMention(args[0], msg.guild);
+        if (!Member) Member = msg.member;
         if (Member === undefined) {
             return msg.reply({
                 embeds: [replyEmbedError(userUndefined)],
@@ -43,7 +45,9 @@ const Info = async (msg, client) => {
 
     // userinfo command
     if (command === "userinfo") {
-        const Member = await getUserFromID(msg, client);
+        const { args } = splitMessages(msg);
+        let Member = await getUserFromMention(args[0], msg.guild);
+        if (!Member) Member = msg.member;
         if (Member === undefined) {
             return msg.reply({
                 embeds: [replyEmbedError(userUndefined)],
@@ -51,8 +55,7 @@ const Info = async (msg, client) => {
         }
         const nickname =
       Member.nickname === null ? Member.user.username : Member.nickname;
-        const status =
-      Member.presence === null ? "Offline" : Member.presence.status;
+        const status = Member.presence?.status || "Offline";
         const voice =
       Member.voice.channelId === null ? "None" : `<#${Member.voice.channelId}>`;
         const memberRoles = Member._roles.map((role) => `<@&${role}>`);
@@ -201,7 +204,8 @@ const Info = async (msg, client) => {
 
     // role info command
     if (command === "roleinfo") {
-        const role = await getRoleByID(msg);
+        const { args } = splitMessages(msg);
+        const role = await getRoleData(msg, args[0]);
         if (role === undefined) {
             return msg.reply({
                 embeds: [replyEmbedError(roleUndefined)],
@@ -231,7 +235,8 @@ const Info = async (msg, client) => {
 
     // channel info command
     if (command === "channelinfo") {
-        const Channel = await getChannel(msg);
+        const { args } = splitMessages(msg);
+        const Channel = await getChannelData(msg, args[0]);
         if (Channel === undefined) {
             return msg.reply({
                 embeds: [replyEmbedError(channelUndefined)],
