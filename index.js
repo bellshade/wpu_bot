@@ -1,13 +1,13 @@
 require("dotenv").config();
-const { Client, Intents } = require("discord.js");
-const { Analytics } = require("./modules/analytics.js");
-const { Filters } = require("./modules/filters.js");
-const { Public } = require("./modules/public.js");
-const { Stickers } = require("./modules/stickers.js");
-const { Timeout } = require("./modules/timeout.js");
-const { PrismaClient } = require("@prisma/client");
-const { Join, Perkenalan } = require("./modules/perkenalan.js");
-const { Info } = require("./modules/info.js");
+const { Client, Intents, Collection } = require("discord.js");
+
+const { PrismaClient }= require("@prisma/client");
+const fs = require('fs');
+
+const TOKEN = process.env.TOKEN;
+
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 const options = {
     intents: [
@@ -24,35 +24,34 @@ const options = {
 };
 
 const main = () => {
-    const prisma = new PrismaClient();
     const client = new Client(options);
+    const prisma = new PrismaClient();
 
-    client.on("ready", () => {
-        console.info(`Logged in as ${client.user.tag}!`);
-        console.info("Bot is ready!");
-    });
+    client.prisma = prisma;
+    client.commands = new Collection();
 
-    client.on("messageCreate", (msg) => {
-        Analytics(msg, client, prisma); // Always load this first
+    // Register commands
+    for (const file of commandFiles) {
+        const command = require(`./commands/${file}`);
+        client.commands.set(command.command.name, command);
+    }
 
-        Public(msg, client); // Public Scope Command
+    // Register events
+    for (const file of eventFiles) {
+        const event = require(`./events/${file}`);
+        if (event.once) {
+            client.once(event.name, (...args) => event.execute(...args));
+        } else {
+            client.on(event.name, (...args) => event.execute(...args));
+        }
+    }
 
-        Stickers(msg, client);
-
-        Filters(msg, client);
-
-        Timeout(msg, client);
-
-        Perkenalan(msg, client, prisma);
-
-        Info(msg, client);
-    });
-
-    client.on("guildMemberAdd", async (guildMember) => {
-        Join(guildMember, client);
-    });
-
-    client.login(process.env.TOKEN);
+    // Login BOT
+    client.login(TOKEN);
 };
 
-main();
+try {
+    main();
+} catch (error) {
+    console.error(error);
+}
