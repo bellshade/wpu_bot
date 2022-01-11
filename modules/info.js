@@ -6,14 +6,10 @@ const {
     getChannelData,
     getRoleData,
     getUserFromMention,
+    embedError,
 } = require("./utility");
 
 const Info = async (msg) => {
-    function replyEmbedError(error) {
-        return new MessageEmbed()
-            .setDescription(`:x: <@${msg.author.id}>, ${error}`)
-            .setColor("RED");
-    }
     try {
         const { command, args } = splitMessages(msg);
 
@@ -41,7 +37,7 @@ const Info = async (msg) => {
             } catch (error) {
                 console.log(error);
                 return msg.reply({
-                    embeds: [replyEmbedError(userUndefined)],
+                    embeds: [embedError(userUndefined)],
                 });
             }
         }
@@ -128,7 +124,7 @@ const Info = async (msg) => {
             } catch (error) {
                 console.log(error);
                 return msg.reply({
-                    embeds: [replyEmbedError(userUndefined)],
+                    embeds: [embedError(userUndefined)],
                 });
             }
         }
@@ -271,7 +267,7 @@ const Info = async (msg) => {
             } catch (error) {
                 console.log(error);
                 return msg.reply({
-                    embeds: [replyEmbedError(roleUndefined)],
+                    embeds: [embedError(roleUndefined)],
                 });
             }
         }
@@ -340,7 +336,7 @@ const Info = async (msg) => {
             } catch (error) {
                 console.log(error);
                 return msg.reply({
-                    embeds: [replyEmbedError(channelUndefined)],
+                    embeds: [embedError(channelUndefined)],
                 });
             }
         }
