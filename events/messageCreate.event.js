@@ -5,9 +5,10 @@ const { Stickers } = require("../modules/stickers.js");
 const { Timeout } = require("../modules/timeout.js");
 const { Perkenalan } = require("../modules/perkenalan.js");
 const { Info } = require("../modules/info.js");
+const { pointSystem } = require("../modules/point-system.js");
 
 module.exports = {
-    name: 'messageCreate',
+    name: "messageCreate",
     once: false,
     execute(msg) {
         const client = msg.client;
@@ -26,5 +27,7 @@ module.exports = {
         Perkenalan(msg, client, prisma);
 
         Info(msg, client, prisma);
+
+        pointSystem(msg, client, prisma);
     },
 };

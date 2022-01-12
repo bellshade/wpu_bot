@@ -31,3 +31,13 @@ model perkenalan {
   favorite_programing_language  String?  @db.Text
   hobby                         String?  @db.Text
 }
+
+model point {
+  id          BigInt   @id @default(autoincrement())
+  ketua_id    String?  @unique
+  ketua_name  String?  @db.VarChar(255)
+  ketua_point Decimal  @db.Decimal
+  author_name String?  @db.VarChar(255)
+  author_id   String?  @db.VarChar(255)
+  timestamp   DateTime @default(now()) @db.Timestamp(0)
+}
