@@ -14,20 +14,23 @@ function checkRoles(msg) {
     return false;
 }
 
-function getUserFromMention(mention, client) {
-    if (!mention) return false;
+async function getUserFromMention(mention, guild) {
+    try {
+        if (!mention) return false;
 
-    if (mention.startsWith("<@") && mention.endsWith(">")) {
-        mention = mention.slice(2, -1);
+        if (mention.startsWith("<@") && mention.endsWith(">")) {
+            mention = mention.slice(2, -1);
 
-        if (mention.startsWith("!")) {
-            mention = mention.slice(1);
+            if (mention.startsWith("!")) {
+                mention = mention.slice(1);
+            }
         }
 
-        return client.users.fetch(mention);
+        return await guild.members.fetch(mention);
+    } catch (error) {
+        console.log(error);
+        return false;
     }
-
-    return false;
 }
 
 function embedError(msg = "Error") {
@@ -137,37 +140,11 @@ function checkPermission(msg, guildMember) {
     });
 }
 
-async function getUserFromID(msg, client) {
+async function getChannelData(msg, args) {
     try {
-        const { args } = splitMessages(msg);
-        let user = await getUserFromMention(args[0], client); //get user from mention
-        let userId;
-        if (!user) {
-            userId = args[0]; //get user by id
-            if (!userId) {
-                userId = msg.author.id; //if not mention user, author will be the user
-            }
-        } else {
-            userId = user.id; //get user id
-        }
-        let member;
-        try {
-            member = await msg.guild.members.fetch(userId);
-        } catch (error) {
-            console.error(error);
-        }
-        return member;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-async function getChannel(msg) {
-    try {
-        const { args } = splitMessages(msg);
-        let channelByID = args[0];
+        let channelByID = args;
         let channelID;
-        if (args[0] === undefined) {
+        if (args === undefined) {
             channelID = msg.channel.id;
         } else {
             channelID = channelByID;
@@ -184,22 +161,25 @@ async function getChannel(msg) {
     }
 }
 
-async function getRoleByID(msg) {
-    const { args } = splitMessages(msg);
-    let mention = msg.mentions.roles.first();
-    let roleID;
-    if (!mention) {
-        roleID = args[0];
-    } else {
-        roleID = mention.id;
-    }
-    let role;
+async function getRoleData(msg, args) {
     try {
-        role = msg.guild.roles.cache.get(roleID);
+        let mention = msg.mentions.roles.first();
+        let roleID;
+        if (!mention) {
+            roleID = args;
+        } else {
+            roleID = mention.id;
+        }
+        let role;
+        try {
+            role = msg.guild.roles.cache.get(roleID);
+        } catch (error) {
+            console.error(error);
+        }
+        return role;
     } catch (error) {
-        console.error(error);
+        console.log(error);
     }
-    return role;
 }
 
 module.exports = {
@@ -215,7 +195,6 @@ module.exports = {
     deleteMsg,
     splitMessages,
     checkPermission,
-    getUserFromID,
-    getChannel,
-    getRoleByID,
+    getChannelData,
+    getRoleData,
 };
