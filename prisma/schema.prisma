@@ -34,10 +34,11 @@ model perkenalan {
 
 model point {
   id          BigInt   @id @default(autoincrement())
-  ketua_id    String?  @unique
+  ketua_id    String   @unique
   ketua_name  String?  @db.VarChar(255)
-  ketua_point Decimal  @db.Decimal
+  ketua_point Int  
   author_name String?  @db.VarChar(255)
   author_id   String?  @db.VarChar(255)
-  timestamp   DateTime @default(now()) @db.Timestamp(0)
+  createdAt   DateTime
+  updatedAt   DateTime
 }

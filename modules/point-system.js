@@ -1,4 +1,3 @@
-require("dotenv").config();
 const {
     splitMessages,
     sendMsg,
@@ -10,63 +9,72 @@ const { MessageEmbed } = require("discord.js");
 const pointSystem = async (msg, client, prisma) => {
     const { command, args } = splitMessages(msg);
 
-    const OPRole = msg.member.roles.cache.some((roles) =>
-        JSON.parse(process.env.OPROLE).includes(roles.id)
+    const adminRole = msg.member.roles.cache.some((roles) =>
+        JSON.parse(process.env.ROLES_ADMIN).includes(roles.id)
     );
 
-    const role = msg.member.roles.cache.has(process.env.KROLE);
+    const hasKetuaRole = msg.member.roles.cache.has(process.env.ROLE_KETUA);
+
+    const getDateNow = new Date();
+
+    const pointValue = parseInt(args[1]);
 
     // Untuk mengecek profile moderator
     if (command === "modprofile") {
         try {
-            if (!role) return;
-            let Member = await getUserFromMention(args[0], msg.guild);
+            if (!hasKetuaRole) return;
+            let members = await getUserFromMention(args[0], msg.guild);
             const embed = new MessageEmbed();
-            if (!Member) {
-                Member = msg.member;
+            if (!members) {
+                members = msg.member;
             }
 
-            const point = await prisma.point.findFirst({
+            const ketuaData = await prisma.point.findFirst({
                 where: {
-                    ketua_id: Member.user.id,
+                    ketua_id: members.user.id,
                 },
             });
 
-            const teamSide = Member.roles.cache.has(process.env.BROLE)
+            const teamSide = members.roles.cache.has(process.env.ROLE_BELLSHADE)
                 ? "Bellshade Team"
                 : "Mod Team";
 
-            if (point === null) {
-                embed.setDescription(`<@${Member.id}> didn't have any points`);
+            if (!ketuaData) {
+                embed.setDescription(`<@${members.id}> didn't have any points`);
             } else {
                 embed
                     .setColor("#992d22")
-                    .setDescription(`<@${Member.user.id}>'s moderator profile`)
-                    .setThumbnail(Member.displayAvatarURL({ dynamic: true }))
+                    .setDescription(`<@${members.user.id}>'s moderator profile`)
+                    .setThumbnail(members.displayAvatarURL({ dynamic: true }))
                     .addFields(
                         {
                             name: "Tag",
-                            value: Member.user.tag,
+                            value: members.user.tag,
                             inline: true,
                         },
                         {
                             name: "ID",
-                            value: Member.user.id,
+                            value: members.user.id,
                             inline: true,
                         },
                         {
                             name: "Point",
-                            value: `${point.ketua_point}`,
+                            value: `${ketuaData.ketua_point}`,
                             inline: true,
                         },
                         {
                             name: `Highest Role`,
-                            value: `<@&${Member.roles.highest.id}>`,
+                            value: `<@&${members.roles.highest.id}>`,
                             inline: true,
                         },
                         {
                             name: `Team Side`,
                             value: `${teamSide}`,
+                            inline: true,
+                        },
+                        {
+                            name: "Last modified by",
+                            value: `${ketuaData.author_name}`,
                             inline: true,
                         }
                     )
@@ -89,31 +97,34 @@ const pointSystem = async (msg, client, prisma) => {
     // Menambah poin moderator (hanya dosen & staff yang bisa menggunakannya)
     if (command === "addpoint") {
         try {
-            if (!OPRole) return;
-            let Member = await getUserFromMention(args[0], msg.guild);
-            if (!Member) return msg.reply("Please enter a valid user");
-            const Point = await prisma.point.upsert({
+            if (!adminRole) return;
+            let members = await getUserFromMention(args[0], msg.guild);
+            if (!members) return msg.reply("Please enter a valid user");
+            const points = await prisma.point.upsert({
                 where: {
-                    ketua_id: Member.user.id,
+                    ketua_id: members.user.id,
                 },
                 update: {
-                    ketua_point: { increment: args[1] },
+                    ketua_point: { increment: pointValue },
                     author_name: msg.author.tag,
                     author_id: msg.author.id,
+                    updatedAt: getDateNow,
                 },
                 create: {
-                    ketua_id: Member.user.id,
-                    ketua_name: Member.user.tag,
-                    ketua_point: "1",
+                    ketua_id: members.user.id,
+                    ketua_name: members.user.tag,
+                    ketua_point: 1,
                     author_name: msg.author.tag,
                     author_id: msg.author.id,
+                    createdAt: getDateNow,
+                    updatedAt: getDateNow,
                 },
             });
             const embed = new MessageEmbed()
                 .setTitle("WPU for Moderator")
                 .setThumbnail(msg.guild.iconURL({ dynamic: true }))
                 .setDescription(
-                    `**${msg.author.tag} add ${args[1]} point to ${Member.user.tag}.** \n Now ${Member.user.tag} have ${Point.ketua_point} points`
+                    `**${msg.author.tag} add ${pointValue} point to ${members.user.tag}.** \n Now ${members.user.tag} have ${points.ketua_point} points`
                 )
                 .setFooter({
                     text: `Command used by: ${msg.author.tag}`,
@@ -137,31 +148,34 @@ const pointSystem = async (msg, client, prisma) => {
     // Mengurangi poin moderator (hanya dosen & staff yang bisa menggunakannya)
     if (command === "decpoint") {
         try {
-            if (!OPRole) return;
-            let Member = await getUserFromMention(args[0], msg.guild);
-            if (!Member) return msg.reply("Please enter a valid user");
-            const Point = await prisma.point.upsert({
+            if (!adminRole) return;
+            let members = await getUserFromMention(args[0], msg.guild);
+            if (!members) return msg.reply("Please enter a valid user");
+            const points = await prisma.point.upsert({
                 where: {
-                    ketua_id: Member.user.id,
+                    ketua_id: members.user.id,
                 },
                 update: {
-                    ketua_point: { decrement: args[1] },
+                    ketua_point: { decrement: pointValue },
                     author_name: msg.author.tag,
                     author_id: msg.author.id,
+                    updatedAt: getDateNow,
                 },
                 create: {
-                    ketua_id: Member.user.id,
-                    ketua_name: Member.user.tag,
-                    ketua_point: "0",
+                    ketua_id: members.user.id,
+                    ketua_name: members.user.tag,
+                    ketua_point: 0,
                     author_name: msg.author.tag,
                     author_id: msg.author.id,
+                    createdAt: getDateNow,
+                    updatedAt: getDateNow,
                 },
             });
             const embed = new MessageEmbed()
                 .setTitle("WPU for Moderator")
                 .setThumbnail(msg.guild.iconURL({ dynamic: true }))
                 .setDescription(
-                    `**${msg.author.tag} remove ${args[1]} point to ${Member.user.tag}.** \n Now ${Member.user.tag} have ${Point.ketua_point} points`
+                    `**${msg.author.tag} remove ${pointValue} point to ${members.user.tag}.** \n Now ${members.user.tag} have ${points.ketua_point} points`
                 )
                 .setFooter({
                     text: `Command used by: ${msg.author.tag}`,
@@ -178,66 +192,6 @@ const pointSystem = async (msg, client, prisma) => {
                         "An error occurred while executing the command. Or because you didn't provide the valid number."
                     ),
                 ],
-            });
-        }
-    }
-
-    // Otomatis menambah dan mengurangi poin moderator (dilakukan pada hari yang ditentukan oleh dosen/staff)
-    if (command === "modpoint") {
-        try {
-            if (!OPRole) return;
-            const ketuaRole = msg.guild.roles.cache.get(process.env.KROLE);
-            const memberRole = ketuaRole.members.map((member) => member.user);
-
-            for (const member of memberRole) {
-                const allMsg = await prisma.messages.findMany({
-                    where: {
-                        author_id: member.id,
-                    },
-                });
-                var massCreateNew = {
-                    ketua_id: member.id,
-                    ketua_name: member.tag,
-                    ketua_point: "1",
-                    author_name: client.user.tag,
-                    author_id: client.user.id,
-                };
-                const lastMsg = allMsg.slice(-1);
-                const date = lastMsg.map((m) => new Date(m.timestamp).getDate());
-                for (const d of date) {
-                    const calc = new Date().getDate() - d;
-                    if (calc <= 7) {
-                        await prisma.point.upsert({
-                            where: {
-                                ketua_id: member.id,
-                            },
-                            update: {
-                                ketua_point: { increment: 1 },
-                                author_name: client.user.tag,
-                                author_id: client.user.id,
-                            },
-                            create: massCreateNew,
-                        });
-                    } else {
-                        await prisma.point.upsert({
-                            where: {
-                                ketua_id: member.id,
-                            },
-                            update: {
-                                ketua_point: { decrement: 1 },
-                                author_name: client.user.tag,
-                                author_id: client.user.id,
-                            },
-                            create: massCreateNew,
-                        });
-                    }
-                }
-            }
-            msg.react("👍");
-        } catch (error) {
-            console.log(error);
-            return sendMsg(msg.channel, {
-                embeds: [embedError("An error occurred while executing the command.")],
             });
         }
     }

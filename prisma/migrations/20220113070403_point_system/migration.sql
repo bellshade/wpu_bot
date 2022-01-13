@@ -1,12 +1,13 @@
 -- CreateTable
 CREATE TABLE `point` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `ketua_id` VARCHAR(191) NULL,
+    `ketua_id` VARCHAR(191) NOT NULL,
     `ketua_name` VARCHAR(255) NULL,
-    `ketua_point` DECIMAL NOT NULL,
+    `ketua_point` INTEGER NOT NULL,
     `author_name` VARCHAR(255) NULL,
     `author_id` VARCHAR(255) NULL,
-    `timestamp` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `createdAt` DATETIME(3) NOT NULL,
+    `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `point_ketua_id_key`(`ketua_id`),
     PRIMARY KEY (`id`)
