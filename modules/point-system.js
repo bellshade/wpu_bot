@@ -9,13 +9,13 @@ const { MessageEmbed } = require("discord.js");
 const pointSystem = async (msg, client, prisma) => {
     const { command, args } = splitMessages(msg);
 
-    const adminRole = msg.member.roles.cache.some((roles) =>
-        JSON.parse(process.env.ROLES_ADMIN).includes(roles.id)
+    const staffRole = msg.member.roles.cache.some((roles) =>
+        JSON.parse(process.env.ROLES_STAFF).includes(roles.id)
     );
 
     const hasKetuaRole = msg.member.roles.cache.has(process.env.ROLE_KETUA);
 
-    const getDateNow = new Date();
+    const getUserMention = args[0];
 
     const pointValue = parseInt(args[1]);
 
@@ -23,7 +23,7 @@ const pointSystem = async (msg, client, prisma) => {
     if (command === "modprofile") {
         try {
             if (!hasKetuaRole) return;
-            let members = await getUserFromMention(args[0], msg.guild);
+            let members = await getUserFromMention(getUserMention, msg.guild);
             const embed = new MessageEmbed();
             if (!members) {
                 members = msg.member;
@@ -97,8 +97,8 @@ const pointSystem = async (msg, client, prisma) => {
     // Menambah poin moderator (hanya dosen & staff yang bisa menggunakannya)
     if (command === "addpoint") {
         try {
-            if (!adminRole) return;
-            let members = await getUserFromMention(args[0], msg.guild);
+            if (!staffRole) return;
+            let members = await getUserFromMention(getUserMention, msg.guild);
             if (!members) return msg.reply("Please enter a valid user");
             const points = await prisma.point.upsert({
                 where: {
@@ -106,18 +106,15 @@ const pointSystem = async (msg, client, prisma) => {
                 },
                 update: {
                     ketua_point: { increment: pointValue },
-                    author_name: msg.author.tag,
+                    author_name: msg.author.username,
                     author_id: msg.author.id,
-                    updatedAt: getDateNow,
                 },
                 create: {
                     ketua_id: members.user.id,
-                    ketua_name: members.user.tag,
+                    ketua_name: members.user.username,
                     ketua_point: 1,
-                    author_name: msg.author.tag,
+                    author_name: msg.author.username,
                     author_id: msg.author.id,
-                    createdAt: getDateNow,
-                    updatedAt: getDateNow,
                 },
             });
             const embed = new MessageEmbed()
@@ -148,8 +145,8 @@ const pointSystem = async (msg, client, prisma) => {
     // Mengurangi poin moderator (hanya dosen & staff yang bisa menggunakannya)
     if (command === "decpoint") {
         try {
-            if (!adminRole) return;
-            let members = await getUserFromMention(args[0], msg.guild);
+            if (!staffRole) return;
+            let members = await getUserFromMention(getUserMention, msg.guild);
             if (!members) return msg.reply("Please enter a valid user");
             const points = await prisma.point.upsert({
                 where: {
@@ -157,18 +154,15 @@ const pointSystem = async (msg, client, prisma) => {
                 },
                 update: {
                     ketua_point: { decrement: pointValue },
-                    author_name: msg.author.tag,
+                    author_name: msg.author.username,
                     author_id: msg.author.id,
-                    updatedAt: getDateNow,
                 },
                 create: {
                     ketua_id: members.user.id,
-                    ketua_name: members.user.tag,
+                    ketua_name: members.user.username,
                     ketua_point: 0,
-                    author_name: msg.author.tag,
+                    author_name: msg.author.username,
                     author_id: msg.author.id,
-                    createdAt: getDateNow,
-                    updatedAt: getDateNow,
                 },
             });
             const embed = new MessageEmbed()

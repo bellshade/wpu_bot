@@ -1,4 +1,4 @@
-var cron = require("node-cron");
+const cron = require("node-cron");
 module.exports = {
     name: "ready",
     once: false,
@@ -21,15 +21,12 @@ module.exports = {
                         },
                         take: 1,
                     });
-                    const getDateNow = new Date();
                     let massCreateNew = {
                         ketua_id: member.id,
-                        ketua_name: member.tag,
+                        ketua_name: member.username,
                         ketua_point: 1,
-                        author_name: client.user.tag,
+                        author_name: client.user.username,
                         author_id: client.user.id,
-                        createdAt: getDateNow,
-                        updatedAt: getDateNow,
                     };
                     const date = lastMsg.map((m) => new Date(m.timestamp).getDate());
                     for (const d of date) {
@@ -41,9 +38,8 @@ module.exports = {
                                 },
                                 update: {
                                     ketua_point: { increment: 1 },
-                                    author_name: client.user.tag,
+                                    author_name: client.user.username,
                                     author_id: client.user.id,
-                                    updatedAt: getDateNow,
                                 },
                                 create: massCreateNew,
                             });
@@ -54,9 +50,8 @@ module.exports = {
                                 },
                                 update: {
                                     ketua_point: { decrement: 1 },
-                                    author_name: client.user.tag,
+                                    author_name: client.user.username,
                                     author_id: client.user.id,
-                                    updatedAt: getDateNow,
                                 },
                                 create: massCreateNew,
                             });
