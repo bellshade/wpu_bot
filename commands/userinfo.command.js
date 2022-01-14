@@ -1,27 +1,35 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MessageEmbed } = require("discord.js");
 
 exports.command = new SlashCommandBuilder()
-    .setName('userinfo')
-    .setDescription('Views your info or other user info!')
-    .addUserOption(option => option.setName('target').setDescription('Select a user'));
+    .setName("userinfo")
+    .setDescription("Views your info or other user info!")
+    .addUserOption((option) =>
+        option.setName("target").setDescription("Select a user")
+    );
 
 exports.execute = async (interaction) => {
     try {
         await interaction.deferReply();
         let member, name, status, voice, memberRoles, customStatus;
-        const target = interaction.options.getUser('target');
+        const target = interaction.options.getUser("target");
 
         member = interaction.member;
-        if(target) member = await interaction.guild.members.fetch(target);
+        if (target) member = await interaction.guild.members.fetch(target);
 
         name = member.displayName;
         status = !member.presence ? "Offline" : member.presence.status;
         voice = !member.voice.channelId ? "None" : `<#${member.voice.channelId}>`;
-        memberRoles = !member.roles ? "None" : member._roles.map((role) => `<@&${role}>`);
+        memberRoles = !member.roles
+            ? "None"
+            : member._roles.map((role) => `<@&${role}>`);
 
-        customStatus = 'None';
-        if(!member.presence && member.presence.activities && member.presence.activities[0]) {
+        customStatus = "None";
+        if (
+            member.presence &&
+      member.presence.activities &&
+      member.presence.activities[0]
+        ) {
             customStatus = member.presence.activities[0].state;
         }
 

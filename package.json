@@ -20,7 +20,8 @@
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.0",
     "dotenv": "^10.0.0",
-    "fuse.js": "^6.5.3"
+    "fuse.js": "^6.5.3",
+    "node-cron": "^3.0.0"
   },
   "devDependencies": {
     "eslint": "^8.6.0",
