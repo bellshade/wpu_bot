@@ -12,14 +12,19 @@ module.exports = {
                 const ketuaRole = guild.roles.cache.get(process.env.ROLE_KETUA);
                 const memberRole = ketuaRole.members.map((member) => member.user);
                 for (const member of memberRole) {
-                    const lastMsg = await prisma.messages.findMany({
+                    const dateInt = new Date().setDate(new Date().getDate() - 7);
+                    const lastMsg = await prisma.messages.findFirst({
+                        // Ambil hasil pertama yang sesuai kriteria
                         where: {
-                            author_id: member.id,
+                            author_id: member.id, // id member
+                            timestamp: {
+                                gte: new Date(dateInt),
+                                lt: new Date(),
+                            },
                         },
                         orderBy: {
-                            author_id: "asc",
+                            timestamp: "desc", // mengurutkan waktu agar yang terahkir muncul paling pertama
                         },
-                        take: 1,
                     });
                     let massCreateNew = {
                         ketua_id: member.id,
@@ -28,34 +33,30 @@ module.exports = {
                         author_name: client.user.username,
                         author_id: client.user.id,
                     };
-                    const date = lastMsg.map((m) => new Date(m.timestamp).getDate());
-                    for (const d of date) {
-                        const calc = new Date().getDate() - d;
-                        if (calc <= 7) {
-                            await prisma.point.upsert({
-                                where: {
-                                    ketua_id: member.id,
-                                },
-                                update: {
-                                    ketua_point: { increment: 1 },
-                                    author_name: client.user.username,
-                                    author_id: client.user.id,
-                                },
-                                create: massCreateNew,
-                            });
-                        } else {
-                            await prisma.point.upsert({
-                                where: {
-                                    ketua_id: member.id,
-                                },
-                                update: {
-                                    ketua_point: { decrement: 1 },
-                                    author_name: client.user.username,
-                                    author_id: client.user.id,
-                                },
-                                create: massCreateNew,
-                            });
-                        }
+                    if (lastMsg) {
+                        await prisma.point.upsert({
+                            where: {
+                                ketua_id: member.id,
+                            },
+                            update: {
+                                ketua_point: { increment: 1 },
+                                author_name: client.user.username,
+                                author_id: client.user.id,
+                            },
+                            create: massCreateNew,
+                        });
+                    } else {
+                        await prisma.point.upsert({
+                            where: {
+                                ketua_id: member.id,
+                            },
+                            update: {
+                                ketua_point: { decrement: 1 },
+                                author_name: client.user.username,
+                                author_id: client.user.id,
+                            },
+                            create: massCreateNew,
+                        });
                     }
                 }
             } catch (error) {
