@@ -1,14 +1,19 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MessageEmbed } = require("discord.js");
 
 exports.command = new SlashCommandBuilder()
-    .setName('channelinfo')
-    .setDescription('View information about the given channel')
-    .addChannelOption(option => option.setName('channel').setDescription('Select a channel').setRequired(true));
+    .setName("channelinfo")
+    .setDescription("View information about the given channel")
+    .addChannelOption((option) =>
+        option
+            .setName("channel")
+            .setDescription("Select a channel")
+            .setRequired(true)
+    );
 exports.execute = async (interaction) => {
     try {
         await interaction.deferReply();
-        const channel = interaction.options.getChannel('channel');
+        const channel = interaction.options.getChannel("channel");
         const channelInfoEmbed = new MessageEmbed()
             .setColor("#992d22")
             .setDescription(`<#${channel.id}>`)
@@ -59,7 +64,7 @@ exports.execute = async (interaction) => {
                     inline: true,
                 }
             )
-            .timestamp();
+            .setTimestamp();
         await interaction.editReply({ embeds: [channelInfoEmbed] });
     } catch (error) {
         console.error(error);
