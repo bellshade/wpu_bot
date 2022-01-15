@@ -128,7 +128,7 @@ async function createBanner(nama) {
                 rect: {
                     x: 75,
                     y: 90,
-                    width: 635,
+                    width: 615,
                     height: 540
                 },
                 font: 'Bebas Neue',
