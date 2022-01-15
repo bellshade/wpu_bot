@@ -66,7 +66,7 @@ exports.execute = async (interaction) => {
                 },
                 {
                     name: `Highest Role`,
-                    value: `<@&${member._roles[0]}>`,
+                    value: `<@&${member.roles.highest.id}>`,
                     inline: false,
                 },
                 {

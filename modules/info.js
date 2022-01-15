@@ -20,13 +20,13 @@ const Info = async (msg) => {
         // avatar command
         if (command === 'avatar') {
             try {
-                let Member = await getUserFromMention(args[0], msg.guild);
-                if (!Member) Member = msg.member;
+                let members = await getUserFromMention(args[0], msg.guild);
+                if (!members) members = msg.member;
                 const userAvatarEmbed = new MessageEmbed()
                     .setColor('#992d22')
-                    .setTitle(`${Member.user.username}'s avatar.`)
-                    .setURL(Member.displayAvatarURL())
-                    .setImage(Member.displayAvatarURL({ dynamic: true, size: 2048 }))
+                    .setTitle(`${members.user.username}'s avatar.`)
+                    .setURL(members.displayAvatarURL())
+                    .setImage(members.displayAvatarURL({ dynamic: true, size: 2048 }))
                     .setFooter({
                         text: `Command used by: ${msg.author.username}`,
                         iconURL: `${msg.author.displayAvatarURL({
@@ -45,28 +45,28 @@ const Info = async (msg) => {
         // userinfo command
         if (command === 'userinfo') {
             try {
-                let Member = await getUserFromMention(args[0], msg.guild);
-                if (!Member) Member = msg.member;
+                let members = await getUserFromMention(args[0], msg.guild);
+                if (!members) members = msg.member;
                 const nickname =
-          Member.nickname === null ? Member.user.username : Member.nickname;
-                const status = Member.presence?.status || 'Offline';
+          members.nickname === null ? members.user.username : members.nickname;
+                const status = members.presence?.status || 'Offline';
                 const voice =
-          Member.voice.channelId === null
+          members.voice.channelId === null
               ? 'None'
-              : `<#${Member.voice.channelId}>`;
-                const memberRoles = Member._roles.map((role) => `<@&${role}>`);
+              : `<#${members.voice.channelId}>`;
+                const memberRoles = members._roles.map((role) => `<@&${role}>`);
                 let customStatus = 'None';
                 if (
-                    Member.presence &&
-          Member.presence.activities &&
-          Member.presence.activities[0]
+                    members.presence &&
+          members.presence.activities &&
+          members.presence.activities[0]
                 ) {
-                    customStatus = Member.presence.activities[0].state;
+                    customStatus = members.presence.activities[0].state;
                 }
                 const userInfoEmbed = new MessageEmbed()
                     .setColor('#992d22')
-                    .setTitle(`${Member.user.username}'s Informations.`)
-                    .setThumbnail(Member.displayAvatarURL({ dynamic: true }))
+                    .setTitle(`${members.user.username}'s Informations.`)
+                    .setThumbnail(members.displayAvatarURL({ dynamic: true }))
                     .addFields(
                         {
                             name: 'User Nickname',
@@ -75,7 +75,7 @@ const Info = async (msg) => {
                         },
                         {
                             name: 'User ID',
-                            value: `${Member.user.id}`,
+                            value: `${members.user.id}`,
                             inline: true,
                         },
                         {
@@ -100,17 +100,17 @@ const Info = async (msg) => {
                         },
                         {
                             name: `Highest Role`,
-                            value: `<@&${Member._roles[0]}>`,
+                            value: `<@&${members.roles.highest.id}>`,
                             inline: false,
                         },
                         {
                             name: `Account Created`,
-                            value: new Date(Member.user.createdTimestamp).toUTCString(),
+                            value: new Date(members.user.createdTimestamp).toUTCString(),
                             inline: true,
                         },
                         {
                             name: `Joined Created`,
-                            value: new Date(Member.joinedAt).toUTCString(),
+                            value: new Date(members.joinedAt).toUTCString(),
                             inline: true,
                         }
                     )
