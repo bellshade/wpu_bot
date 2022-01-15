@@ -10,35 +10,35 @@ exports.execute = async (interaction) => {
         const guild = interaction.guild;
         let members = await interaction.guild.members.fetch({ withPresences: true });
         let onlineMembers = {
-            online: await members.filter( (online) => online.presence?.status === "online" ).size,
-            idle: await members.filter((online) => online.presence?.status === "idle").size,
-            dnd: await members.filter((online) => online.presence?.status === "dnd").size,
+            online: await members.filter( (online) => online.presence?.status === 'online' ).size,
+            idle: await members.filter((online) => online.presence?.status === 'idle').size,
+            dnd: await members.filter((online) => online.presence?.status === 'dnd').size,
         };
 
         const onlineMemberCount = onlineMembers.online + onlineMembers.idle + onlineMembers.dnd;
-        const boostLevel = guild.premiumTier === "NONE" ? "0" : guild.premiumTier.slice(5);
+        const boostLevel = guild.premiumTier === 'NONE' ? '0' : guild.premiumTier.slice(5);
         const serverInfoEmbed = new MessageEmbed()
-            .setColor("#992d22")
-            .setTitle("WPU Server Informations")
+            .setColor('#992d22')
+            .setTitle('WPU Server Informations')
             .setThumbnail(guild.iconURL({ dynamic: true }))
             .addFields(
                 {
-                    name: "Server Owner",
+                    name: 'Server Owner',
                     value: `<@${guild.ownerId}>`,
                     inline: true,
                 },
                 {
-                    name: "Server ID",
+                    name: 'Server ID',
                     value: guild.id,
                     inline: true,
                 },
                 {
-                    name: "\u200B",
-                    value: "\u200B",
+                    name: '\u200B',
+                    value: '\u200B',
                     inline: true,
                 },
                 {
-                    name: "Members Informations",
+                    name: 'Members Informations',
                     value: `All members: ${guild.memberCount}
                     Members: ${guild.members.cache.filter((member) => !member.user.bot).size}
                     Bots: ${guild.members.cache.filter((member) => member.user.bot).size}
@@ -47,12 +47,12 @@ exports.execute = async (interaction) => {
                     inline: true,
                 },
                 {
-                    name: "Server Informations",
+                    name: 'Server Informations',
                     value: `Total roles: ${guild.roles.cache.size}
-                    Categories: ${guild.channels.cache.filter((guildInfo) => guildInfo.type === "GUILD_CATEGORY").size}
+                    Categories: ${guild.channels.cache.filter((guildInfo) => guildInfo.type === 'GUILD_CATEGORY').size}
                     Total channels: ${guild.channels.cache.size}
-                    Text channels: ${guild.channels.cache.filter((guildInfo) => guildInfo.type === "GUILD_TEXT").size}
-                    Voice channels: ${guild.channels.cache.filter((guildInfo) => guildInfo.type === "GUILD_VOICE").size}
+                    Text channels: ${guild.channels.cache.filter((guildInfo) => guildInfo.type === 'GUILD_TEXT').size}
+                    Voice channels: ${guild.channels.cache.filter((guildInfo) => guildInfo.type === 'GUILD_VOICE').size}
                     Boost level: ${boostLevel} 
                     Total boost: ${guild.premiumSubscriptionCount}
                     Server created at: ${new Date(guild.createdTimestamp).toLocaleDateString()}`,

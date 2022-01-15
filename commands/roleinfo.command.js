@@ -12,22 +12,22 @@ exports.execute = async (interaction) => {
         const role = interaction.options.getRole('target');
         const members = role.members.map((member) => member.user.username);
         const roleInfoEmbed = new MessageEmbed()
-            .setColor("#992d22")
+            .setColor('#992d22')
             .setDescription(`**${role.name}**`)
             .addFields(
-                { name: "Users", value: `${role.members.size}`, inline: true },
-                { name: "Mentionable", value: `${role.mentionable}`, inline: true },
-                { name: "Hoist", value: `${role.hoist}`, inline: true },
-                { name: "Position", value: `${role.position}`, inline: true },
-                { name: "Managed", value: `${role.managed}`, inline: true },
-                { name: "Color", value: `${role.hexColor}`, inline: true },
+                { name: 'Users', value: `${role.members.size}`, inline: true },
+                { name: 'Mentionable', value: `${role.mentionable}`, inline: true },
+                { name: 'Hoist', value: `${role.hoist}`, inline: true },
+                { name: 'Position', value: `${role.position}`, inline: true },
+                { name: 'Managed', value: `${role.managed}`, inline: true },
+                { name: 'Color', value: `${role.hexColor}`, inline: true },
                 {
-                    name: "Creation Date",
+                    name: 'Creation Date',
                     value: new Date(role.createdTimestamp).toLocaleString(),
                     inline: false,
                 },
-                { name: "Members", value: members.join(", "), inline: false },
-                { name: "Role ID", value: role.id, inline: false }
+                { name: 'Members', value: members.join(', '), inline: false },
+                { name: 'Role ID', value: role.id, inline: false }
             );
         await interaction.editReply({ embeds: [roleInfoEmbed] });
     } catch (error) {

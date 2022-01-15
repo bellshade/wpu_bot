@@ -24,6 +24,7 @@
       "error",
       { "max": 1, "maxBOF": 0, "maxEOF": 0 }
     ],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
     "no-multi-spaces": "error"
   }
 }

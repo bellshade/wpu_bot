@@ -1,8 +1,8 @@
+const path = require('path');
 const { registerFont, loadImage, createCanvas } = require('canvas');
 const { MessageAttachment, MessageEmbed } = require('discord.js');
-const fs = require('fs');
-const path = require('path');
 const { deleteMsg, sendTempMsg } = require('./utility');
+
 const CHANNEL_LOBBY = process.env.CHANNEL_LOBBY;
 const CHANNEL_PERKENALAN = process.env.CHANNEL_PERKENALAN;
 const ROLES_MAHASISWA = process.env.ROLES_MAHASISWA;
@@ -14,20 +14,20 @@ const Perkenalan = async (msg, client, prisma) => {
     try {
         if(msg.channelId !== CHANNEL_PERKENALAN || msg.author.bot === true) return;
         const split = msg.content.split(/\n/gm);
-        const userId = msg.author.id;
-        const wrongFormat = {content:`<@${userId}>, tolong masukkan data sesuai format!`, allowedMentions:{users:[userId], repliedUser: true} };
-        const replyMsg = {content:`Terimakasih <@${userId}>, sudah perkenalan sesuai format. Salam kenal`, allowedMentions:{user:[userId], repliedUser: true}};
+        const user = msg.author;
+        const wrongFormatMsg = { content:`<@${user.id}> ,tolong masukkan data sesuai format!`, allowedMentions:{users: [user.id]} };
+        const replyMsg = { content:`Terimakasih <@${user.id}> ,sudah perkenalan sesuai format. Salam kenal`, allowedMentions:{users: [user.id]} };
 
         if(split.length !== 7) {
             deleteMsg(msg);
-            sendTempMsg(msg.channel, wrongFormat);
+            sendTempMsg(msg.channel, wrongFormatMsg);
             return;
         }
 
         if(split[0].includes('Siapa nama kamu?') && split[1].includes('Asal dari mana?') && split[2].includes('Sekolah / Kuliah di mana?') && split[3].includes('Bekerja di mana?') && split[4].includes('Dari mana tau WPU?') && split[5].includes('Bahasa pemrograman favorit?') && split[6].includes('Hobby / Interest?')) {
             // Send data
             const data = {
-                author_id: userId,
+                author_id: user.id,
                 channel_id: msg.channelId,
                 message_id: msg.id,
                 message_content: msg.content,
@@ -45,7 +45,7 @@ const Perkenalan = async (msg, client, prisma) => {
             // Validate name
             if((data.nama.length >= 50 || data.nama.length <= 3) && !data.nama.match(nameRE)) {
                 deleteMsg(msg);
-                sendTempMsg(msg.channel, wrongFormat);
+                sendTempMsg(msg.channel, wrongFormatMsg);
                 return;
             }
 
@@ -66,7 +66,7 @@ const Perkenalan = async (msg, client, prisma) => {
             }
         } else {
             deleteMsg(msg);
-            sendTempMsg(msg.channel, wrongFormat);
+            sendTempMsg(msg.channel, wrongFormatMsg);
             return;
         }
 
@@ -78,20 +78,19 @@ const Perkenalan = async (msg, client, prisma) => {
 const Join = async (guildMember, client) => {
     try {
         const username = guildMember.user.username;
-        const userId = guildMember.user.id;
+        const user = guildMember.user;
         const imageBuffer = await createBanner(username);
         const perkenalanCh = await client.channels.fetch(CHANNEL_LOBBY);
         const attachment = new MessageAttachment(imageBuffer, 'welcome.png');
 
-        const messages = `<:wpublack:723675025894539294> Selamat datang di server discord
-            Web Programming UNPAS
-            
-            Sebelum itu, silakan membuka <#745872171825627157> untuk membaca **Peraturan** server kami!
-            
-            Dilanjutkan ke <#722024507707228160> untuk berkenalan **sesuai format**
-            
-            Jika ada pertanyaan, jangan malu untuk bertanya kepada __Ketua Kelas__
-        `;
+        let messages = `<:wpublack:723675025894539294> Selamat datang di server discord\n`;
+        messages += `Web Programming UNPAS\n`;
+        messages += `\n`;
+        messages += `Sebelum itu, silakan membuka <#745872171825627157> untuk membaca **Peraturan** server kami!\n`;
+        messages += `\n`;
+        messages += `Dilanjutkan ke <#722024507707228160> untuk berkenalan **sesuai format**\n`;
+        messages += `\n`;
+        messages += `Jika ada pertanyaan, jangan malu untuk bertanya kepada __Ketua Kelas__\n`;
 
         const embed = new MessageEmbed()
             .setTitle(`Hallo, ${username}`)
@@ -99,7 +98,7 @@ const Join = async (guildMember, client) => {
             .setThumbnail(guildMember.avatarURL())
             .setImage('attachment://welcome.png');
 
-        perkenalanCh.send({ content:`<@${userId}> Selamat Datang!`, allowedMentions:{users: [userId]}, embeds: [embed], files: [attachment]});
+        perkenalanCh.send({ content:`<@${user.id}> Selamat Datang!`, allowedMentions:{users: [user.id]}, embeds: [embed], files: [attachment]});
     } catch (error) {
         console.error(error);
     }
@@ -129,7 +128,7 @@ async function createBanner(nama) {
                 rect: {
                     x: 75,
                     y: 90,
-                    width: 635,
+                    width: 615,
                     height: 540
                 },
                 font: 'Bebas Neue',
@@ -142,12 +141,7 @@ async function createBanner(nama) {
         );
 
         // Save to buffer
-        const buffer = canvas.toBuffer();
-
-        // Save a copy
-        fs.writeFileSync(path.join(__dirname, '..', 'temp', `${nama}-${Date.now()}.png`), buffer);
-
-        return buffer;
+        return canvas.toBuffer();
     } catch (error) {
         console.error(error);
     }
@@ -230,7 +224,7 @@ function drawMultilineText(ctx, text, opts) {
 
         lines = lastFittingLines;
         ctx.font = lastFittingFont;
-        if (opts.verbose) opts.logFunction("Font used: " + ctx.font);
+        if (opts.verbose) opts.logFunction('Font used: ' + ctx.font);
         const offset = opts.rect.y - lastFittingLineHeight / 2 + (opts.rect.height - lastFittingY) / 2; // modifying calculation (issue 2)
         // eslint-disable-next-line no-redeclare
         for (var line of lines) {
