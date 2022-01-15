@@ -1,4 +1,4 @@
-const { Join } = require("../modules/perkenalan");
+const { Join } = require('../modules/perkenalan');
 
 module.exports = {
     name: 'guildMemberAdd',

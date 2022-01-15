@@ -1,7 +1,7 @@
-require("dotenv").config();
-const { Client, Intents, Collection } = require("discord.js");
+require('dotenv').config();
+const { Client, Intents, Collection } = require('discord.js');
 
-const { PrismaClient }= require("@prisma/client");
+const { PrismaClient }= require('@prisma/client');
 const fs = require('fs');
 
 const TOKEN = process.env.TOKEN;
@@ -19,7 +19,7 @@ const options = {
         Intents.FLAGS.GUILD_PRESENCES,
     ],
     allowedMentions: {
-        parse: ["users", "roles"],
+        parse: ['users', 'roles'],
     },
 };
 

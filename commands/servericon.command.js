@@ -8,7 +8,7 @@ exports.execute = async (interaction) => {
         const name = interaction.guild.name;
         const icon = interaction.guild.iconURL({ dynamic: true, size: 2048 });
         const serverIconEmbed = new MessageEmbed()
-            .setColor("#992d22")
+            .setColor('#992d22')
             .setTitle(`${name}'s icon.`)
             .setURL(icon)
             .setImage(icon)

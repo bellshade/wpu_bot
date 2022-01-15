@@ -224,7 +224,7 @@ function drawMultilineText(ctx, text, opts) {
 
         lines = lastFittingLines;
         ctx.font = lastFittingFont;
-        if (opts.verbose) opts.logFunction("Font used: " + ctx.font);
+        if (opts.verbose) opts.logFunction('Font used: ' + ctx.font);
         const offset = opts.rect.y - lastFittingLineHeight / 2 + (opts.rect.height - lastFittingY) / 2; // modifying calculation (issue 2)
         // eslint-disable-next-line no-redeclare
         for (var line of lines) {

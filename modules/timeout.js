@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed } = require('discord.js');
 
 const {
     checkRoles,
@@ -6,7 +6,7 @@ const {
     splitMessages,
     getUserFromMention,
     checkPermission,
-} = require("./utility");
+} = require('./utility');
 
 const timeCalc = {
     s: 1,
@@ -19,7 +19,7 @@ const Timeout = async (msg) => {
     try {
         const { command, args } = splitMessages(msg);
 
-        if (command !== "timeout") return;
+        if (command !== 'timeout') return;
         if (!checkRoles(msg)) return;
 
         const users = [];
@@ -31,14 +31,14 @@ const Timeout = async (msg) => {
         }
 
         if (users.length == 0) {
-            msg.reply("Please mention a user");
+            msg.reply('Please mention a user');
             return;
         }
 
         const timeType = args[0].slice(-1);
         // Check format waktu apakah sudah sesuai
-        if (!["s", "m", "h", "d"].includes(timeType)) {
-            msg.reply("Please set the time");
+        if (!['s', 'm', 'h', 'd'].includes(timeType)) {
+            msg.reply('Please set the time');
             return;
         }
 
@@ -46,7 +46,7 @@ const Timeout = async (msg) => {
         const durationMs = Math.floor(duration * (timeCalc[timeType] || 1) * 1000); // Covert duration to miliseconds
         // check apakah durasi melebihi batas maksimum
         if (durationMs >= 2419200000) {
-            msg.reply("Maximal timeout is 27d");
+            msg.reply('Maximal timeout is 27d');
             return;
         }
 
@@ -55,7 +55,7 @@ const Timeout = async (msg) => {
                 const guildMember = await msg.guild.members.fetch(user.id);
                 if (!await checkPermission(msg, guildMember)) return;
                 const timeoutEmbed = new MessageEmbed()
-                    .setColor("#992d22")
+                    .setColor('#992d22')
                     .setDescription(`<@${user.id}> has been timeout`);
                 await guildMember.timeout(durationMs, args[1]);
                 sendMsg(msg.channel, { embeds: [timeoutEmbed] });

@@ -1,65 +1,65 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js');
 
 exports.command = new SlashCommandBuilder()
-    .setName("channelinfo")
-    .setDescription("View information about the given channel")
+    .setName('channelinfo')
+    .setDescription('View information about the given channel')
     .addChannelOption((option) =>
         option
-            .setName("channel")
-            .setDescription("Select a channel")
+            .setName('channel')
+            .setDescription('Select a channel')
             .setRequired(true)
     );
 exports.execute = async (interaction) => {
     try {
         await interaction.deferReply();
-        const channel = interaction.options.getChannel("channel");
+        const channel = interaction.options.getChannel('channel');
         const channelInfoEmbed = new MessageEmbed()
-            .setColor("#992d22")
+            .setColor('#992d22')
             .setDescription(`<#${channel.id}>`)
             .addFields(
                 {
-                    name: "Name",
+                    name: 'Name',
                     value: channel.name,
                     inline: true,
                 },
                 {
-                    name: "Server",
+                    name: 'Server',
                     value: channel.guild.name,
                     inline: true,
                 },
                 {
-                    name: "ID",
+                    name: 'ID',
                     value: channel.id,
                     inline: true,
                 },
                 {
-                    name: "Category ID",
+                    name: 'Category ID',
                     value: channel.parentId,
                     inline: true,
                 },
                 {
-                    name: "Position",
+                    name: 'Position',
                     value: `${channel.position + 1}`,
                     inline: true,
                 },
                 {
-                    name: "NSFW",
+                    name: 'NSFW',
                     value: `${channel.nsfw}`,
                     inline: true,
                 },
                 {
-                    name: "Members (cached)",
+                    name: 'Members (cached)',
                     value: `${channel.members.size}`,
                     inline: true,
                 },
                 {
-                    name: "Category",
+                    name: 'Category',
                     value: channel.parent.name,
                     inline: true,
                 },
                 {
-                    name: "Created at",
+                    name: 'Created at',
                     value: new Date(channel.createdTimestamp).toLocaleString(),
                     inline: true,
                 }

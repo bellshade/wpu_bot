@@ -1,10 +1,10 @@
-const cron = require("node-cron");
+const cron = require('node-cron');
 module.exports = {
-    name: "ready",
+    name: 'ready',
     once: false,
     execute(client) {
         console.info(`Logged in as ${client.user.tag}!`);
-        console.info("Bot is ready!");
+        console.info('Bot is ready!');
         const prisma = client.prisma;
         const pointAutomation = async () => {
             try {
@@ -23,7 +23,7 @@ module.exports = {
                             },
                         },
                         orderBy: {
-                            timestamp: "desc", // mengurutkan waktu agar yang terahkir muncul paling pertama
+                            timestamp: 'desc', // mengurutkan waktu agar yang terahkir muncul paling pertama
                         },
                     });
                     let massCreateNew = {
@@ -64,7 +64,7 @@ module.exports = {
             }
         };
 
-        cron.schedule("01 0 * * 1", () => {
+        cron.schedule('01 0 * * 1', () => {
             pointAutomation();
         });
     },

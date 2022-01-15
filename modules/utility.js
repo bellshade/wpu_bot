@@ -1,5 +1,5 @@
-require("dotenv").config();
-const { MessageEmbed } = require("discord.js");
+require('dotenv').config();
+const { MessageEmbed } = require('discord.js');
 
 function checkRoles(msg) {
     // Check if they have one of many roles
@@ -18,10 +18,10 @@ async function getUserFromMention(mention, guild) {
     try {
         if (!mention) return false;
 
-        if (mention.startsWith("<@") && mention.endsWith(">")) {
+        if (mention.startsWith('<@') && mention.endsWith('>')) {
             mention = mention.slice(2, -1);
 
-            if (mention.startsWith("!")) {
+            if (mention.startsWith('!')) {
                 mention = mention.slice(1);
             }
         }
@@ -33,32 +33,32 @@ async function getUserFromMention(mention, guild) {
     }
 }
 
-function embedError(msg = "Error") {
+function embedError(msg = 'Error') {
     return new MessageEmbed()
         .setDescription(`:x: ${msg}`)
-        .setColor("RED")
+        .setColor('RED')
         .setTimestamp();
 }
 
-function embedSuccess(msg = "Success") {
+function embedSuccess(msg = 'Success') {
     return new MessageEmbed()
         .setDescription(`:white_check_mark: ${msg}`)
-        .setColor("GREEN")
+        .setColor('GREEN')
         .setTimestamp();
 }
 
-function embedMsg(msg = "") {
+function embedMsg(msg = '') {
     return new MessageEmbed()
         .setDescription(`${msg}`)
-        .setColor("NOT_QUITE_BLACK")
+        .setColor('NOT_QUITE_BLACK')
         .setTimestamp();
 }
 
-function embedLog(msg = "", title = "Server Log", mention = "") {
+function embedLog(msg = '', title = 'Server Log', mention = '') {
     return new MessageEmbed()
         .setTitle(title)
         .setDescription(`\`\`\`${msg}\`\`\`${mention}`)
-        .setColor("NOT_QUITE_BLACK")
+        .setColor('NOT_QUITE_BLACK')
         .setTimestamp();
 }
 
@@ -67,12 +67,12 @@ function makeRoleMentions(rolesId = []) {
     if (rolesId == undefined || rolesId == null) return;
     for (let i = 0; i < rolesId.length; i++) {
         const role = rolesId[i];
-        if (role == undefined || role == null || role == "") {
+        if (role == undefined || role == null || role == '') {
             continue;
         }
         roles.push(`<@&${role}>`);
     }
-    return roles.join(" ");
+    return roles.join(' ');
 }
 
 function sendMsg(channel, msg) {
@@ -104,7 +104,7 @@ function deleteMsg(msg) {
 function replyEmbedError(msg, error) {
     return new MessageEmbed()
         .setDescription(`:x: <@${msg.author.id}>, ${error}`)
-        .setColor("RED");
+        .setColor('RED');
 }
 
 function splitMessages(msg, withPrefix = false) {
