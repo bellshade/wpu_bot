@@ -12,6 +12,7 @@ module.exports = {
     execute(msg) {
         const client = msg.client;
         const prisma = client.prisma;
+        if (msg.webhookId || msg.author.bot) return;
 
         Analytics(msg, client, prisma); // Always load this first
 
