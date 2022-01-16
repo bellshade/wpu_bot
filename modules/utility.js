@@ -144,10 +144,15 @@ function checkPermission(msg, guildMember) {
 
 async function getChannelData(msg, args) {
     try {
+        const mentions = msg.mentions;
         const channels = msg.guild.channels;
+
+        const mention = mentions.channels.first();
         let channelId = msg.channel.id;
 
         if (args) channelId = args;
+        if (mention) channelId = mention.id;
+
         return await channels.fetch(channelId);
     } catch (error) {
         console.error(error);
@@ -161,11 +166,11 @@ async function getRoleData(msg, args) {
         const roles = msg.guild.roles;
 
         const mention = mentions.roles.first();
-        let roleId = mention.id;
+        let roleId = args;
 
-        if (!mention) roleId = args;
+        if (mention) roleId = mention.id;
 
-        return roles.fetch(roleId);
+        return await roles.fetch(roleId);
     } catch (error) {
         console.log(error);
         return false;
