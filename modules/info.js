@@ -21,7 +21,8 @@ const Info = async (msg) => {
         // avatar command
         if (command === 'avatar') {
             try {
-                let members = await getUserFromMention(args[0], msg.guild);
+                const memberMention = args[0];
+                let members = await getUserFromMention(memberMention, msg.guild);
                 if (!members) members = msg.member;
                 const userAvatarEmbed = new MessageEmbed()
                     .setColor('#992d22')
@@ -47,17 +48,13 @@ const Info = async (msg) => {
         if (command === 'userinfo') {
             try {
                 let members = await getUserFromMention(args[0], msg.guild);
-                if (!members) members = msg.member;
-                const nickname = members.nickname === null
-                    ? members.user.username
-                    : members.nickname;
-                const status = members.presence?.status || 'Offline';
-                const voice =
-          members.voice.channelId === null
-              ? 'None'
-              : `<#${members.voice.channelId}>`;
-                const memberRoles = members._roles.map((role) => `<@&${role}>`);
                 let customStatus = 'None';
+
+                if (!members) members = msg.member;
+                const nickname = !members.nickname ? members.user.username : members.nickname;
+                const status = members.presence?.status || 'Offline';
+                const voice = !members.voice.channelId ? 'None' : `<#${members.voice.channelId}>`;
+                const memberRoles = members._roles.map((role) => `<@&${role}>`);
                 if (
                     members.presence &&
                     members.presence.activities &&
@@ -65,6 +62,7 @@ const Info = async (msg) => {
                 ) {
                     customStatus = members.presence.activities[0].state;
                 }
+
                 const userInfoEmbed = new MessageEmbed()
                     .setColor('#992d22')
                     .setTitle(`${members.user.username}'s Informations.`)
@@ -149,7 +147,7 @@ const Info = async (msg) => {
         if (command === 'serverinfo') {
             let members = await msg.guild.members.fetch({ withPresences: true });
 
-            var onlineMembers = {
+            const onlineMembers = {
                 online: await members.filter(
                     (online) => online.presence?.status === 'online'
                 ).size,
@@ -227,7 +225,8 @@ const Info = async (msg) => {
         // role info command
         if (command === 'roleinfo') {
             try {
-                const role = await getRoleData(msg, args[0]);
+                const roleMention = args[0];
+                const role = await getRoleData(msg, roleMention);
                 const members = role.members.map((member) => member.user.username);
                 const roleInfoEmbed = new MessageEmbed()
                     .setColor('#992d22')
@@ -275,7 +274,8 @@ const Info = async (msg) => {
         // channel info command
         if (command === 'channelinfo') {
             try {
-                const Channel = await getChannelData(msg, args[0]);
+                const channelMention = args[0];
+                const Channel = await getChannelData(msg, channelMention);
                 const channelInfoEmbed = new MessageEmbed()
                     .setColor('#992d22')
                     .setDescription(`<#${Channel.id}>`)
