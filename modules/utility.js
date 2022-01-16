@@ -108,11 +108,12 @@ function replyEmbedError(msg, error) {
 }
 
 function splitMessages(msg, withPrefix = false) {
+    const regex = new RegExp(process.env.PREFIX, 'gi');
     let command, args, split, hasPrefix;
     hasPrefix = true;
     split = msg.content.split(/ +/);
 
-    if(!split[0].match(/;/)) hasPrefix = false;
+    if(!split[0].match(regex)) hasPrefix = false;
     if(!withPrefix) {
         const withoutPrefix = msg.content.slice(process.env.PREFIX.length);
         split = withoutPrefix.split(/ +/);
