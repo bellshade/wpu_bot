@@ -11,7 +11,8 @@ const {
 
 const Info = async (msg) => {
     try {
-        const { command, args } = splitMessages(msg);
+        const { command, args, hasPrefix } = splitMessages(msg);
+        if(!hasPrefix) return;
 
         const userUndefined = 'User not found';
         const channelUndefined = 'Channel not found';
@@ -47,8 +48,9 @@ const Info = async (msg) => {
             try {
                 let members = await getUserFromMention(args[0], msg.guild);
                 if (!members) members = msg.member;
-                const nickname =
-          members.nickname === null ? members.user.username : members.nickname;
+                const nickname = members.nickname === null
+                    ? members.user.username
+                    : members.nickname;
                 const status = members.presence?.status || 'Offline';
                 const voice =
           members.voice.channelId === null
@@ -58,8 +60,8 @@ const Info = async (msg) => {
                 let customStatus = 'None';
                 if (
                     members.presence &&
-          members.presence.activities &&
-          members.presence.activities[0]
+                    members.presence.activities &&
+                    members.presence.activities[0]
                 ) {
                     customStatus = members.presence.activities[0].state;
                 }
@@ -158,10 +160,8 @@ const Info = async (msg) => {
                     .size,
             };
 
-            const onlineMemberCount =
-        onlineMembers.online + onlineMembers.idle + onlineMembers.dnd;
-            const boostLevel =
-        msg.guild.premiumTier === 'NONE' ? '0' : msg.guild.premiumTier.slice(5);
+            const onlineMemberCount = onlineMembers.online + onlineMembers.idle + onlineMembers.dnd;
+            const boostLevel = msg.guild.premiumTier === 'NONE' ? '0' : msg.guild.premiumTier.slice(5);
             const serverInfoEmbed = new MessageEmbed()
                 .setColor('#992d22')
                 .setTitle('WPU Server Informations')

@@ -108,19 +108,20 @@ function replyEmbedError(msg, error) {
 }
 
 function splitMessages(msg, withPrefix = false) {
-    let command, args;
-    if (withPrefix) {
-        const split = msg.content.split(/ +/);
-        command = split[0].toLowerCase();
-        args = split.slice(1);
-    } else {
+    let command, args, split, hasPrefix;
+    hasPrefix = true;
+    split = msg.content.split(/ +/);
+
+    if(!split[0].match(/;/)) hasPrefix = false;
+    if(!withPrefix) {
         const withoutPrefix = msg.content.slice(process.env.PREFIX.length);
-        const split = withoutPrefix.split(/ +/);
-        command = split[0].toLowerCase();
-        args = split.slice(1);
+        split = withoutPrefix.split(/ +/);
     }
 
-    return { command, args };
+    command = split[0].toLowerCase();
+    args = split.slice(1);
+
+    return { command, args, hasPrefix };
 }
 
 function checkPermission(msg, guildMember) {
@@ -128,9 +129,9 @@ function checkPermission(msg, guildMember) {
     return new Promise((resolve) => {
         if (
             guildMember.roles.highest.position >=
-        msg.guild.me.roles.highest.position &&
-        msg.member.roles.highest.position ||
-      msg.guild.ownerId == guildMember.id
+            msg.guild.me.roles.highest.position &&
+            msg.member.roles.highest.position ||
+            msg.guild.ownerId == guildMember.id
         ) {
             sendMsg(msg.channel, { embeds: [replyEmbedError(msg, errorMsg)] });
             resolve(false);
