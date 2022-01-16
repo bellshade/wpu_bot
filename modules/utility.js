@@ -156,20 +156,15 @@ async function getChannelData(msg, args) {
 
 async function getRoleData(msg, args) {
     try {
-        let mention = msg.mentions.roles.first();
-        let roleID;
-        if (!mention) {
-            roleID = args;
-        } else {
-            roleID = mention.id;
-        }
-        let role;
-        try {
-            role = msg.guild.roles.cache.get(roleID);
-        } catch (error) {
-            console.error(error);
-        }
-        return role;
+        const mentions = msg.mentions;
+        const roles = msg.guild.roles;
+
+        const mention = mentions.roles.first();
+        let roleId = mention.id;
+
+        if (!mention) roleId = args;
+
+        return roles.fetch(roleId);
     } catch (error) {
         console.log(error);
         return false;
