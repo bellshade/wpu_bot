@@ -8,26 +8,25 @@ const { MessageEmbed } = require('discord.js');
 
 const pointSystem = async (msg, client, prisma) => {
     const { command, args } = splitMessages(msg);
+    const roles = msg.member.roles;
 
-    const staffRole = msg.member.roles.cache.some((roles) =>
-        JSON.parse(process.env.ROLES_STAFF).includes(roles.id)
+    const staffRole = roles.cache.some((role) =>
+        JSON.parse(process.env.ROLES_STAFF).includes(role.id)
     );
 
-    const hasKetuaRole = msg.member.roles.cache.has(process.env.ROLE_KETUA);
-
+    const hasKetuaRole = roles.cache.has(process.env.ROLE_KETUA);
     const getUserMention = args[0];
-
     const pointValue = parseInt(args[1]);
 
     // Untuk mengecek profile moderator
     if (command === 'modprofile') {
         try {
             if (!hasKetuaRole) return;
+
             let members = await getUserFromMention(getUserMention, msg.guild);
+            if (!members) members = msg.member;
+
             const embed = new MessageEmbed();
-            if (!members) {
-                members = msg.member;
-            }
 
             const ketuaData = await prisma.point.findFirst({
                 where: {
