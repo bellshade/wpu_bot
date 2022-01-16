@@ -17,6 +17,7 @@ const options = {
         Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
         Intents.FLAGS.GUILD_PRESENCES,
+        Intents.FLAGS.GUILD_WEBHOOKS
     ],
     allowedMentions: {
         parse: ['users', 'roles'],

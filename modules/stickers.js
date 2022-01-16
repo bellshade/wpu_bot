@@ -3,24 +3,58 @@ const data = require('../data/sticker.json');
 
 const { deleteMsg, sendMsg } = require('./utility');
 
+const WEBHOOK_ID = process.env.WEBHOOK_ID;
+
 const Stickers = async (msg) => {
-    const split = msg.content.split(/ +/);
-    const command = split[0].toLowerCase();
+    try {
+        const split = msg.content.split(/ +/);
+        const command = split[0].toLowerCase();
 
-    const stickerEmbed = new MessageEmbed()
-        .setColor('#992d22')
-        .setAuthor({
-            name: `${msg.author.username}`,
-            iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
-        })
-        .setDescription(`**reply to:** ${msg.content}`);
+        const author = msg.member;
+        const guild = msg.guild;
 
-    if (data[command]) {
-        const attachment = new MessageAttachment(data[command]);
+        if (data[command]) {
+            const attachment = new MessageAttachment(data[command]);
+            const webhooks = await guild.fetchWebhooks();
+            let webhook = webhooks.get(WEBHOOK_ID);
+            let stickerEmbed = null;
 
-        // Send the attachment in the message channel
-        sendMsg(msg.channel, { files: [attachment], embeds: [stickerEmbed] });
-        deleteMsg(msg);
+            const stickerMsg = {
+                files: [attachment],
+                username: author.displayName,
+                avatarURL: author.displayAvatarURL({ dynamic: true }),
+            };
+
+            if(msg.mentions && msg.mentions.repliedUser) {
+                const replieduser = msg.mentions.repliedUser;
+                stickerEmbed = new MessageEmbed()
+                    .setColor('#992d22')
+                    .setAuthor({
+                        name: `${replieduser.username}`,
+                        iconURL: `${replieduser.displayAvatarURL({ dynamic: true })}`,
+                    })
+                    .setDescription(`**reply to:** ${msg.content}`);
+                stickerMsg.embeds = [stickerEmbed];
+            }
+
+            await webhook.edit({
+                channel: msg.channel,
+                username: author.displayName,
+                avatarURL: author.displayAvatarURL({ dynamic: true })
+            });
+
+            if(['oha'].includes(command)) {
+                sendMsg(msg.channel, {files: [attachment]});
+                deleteMsg(msg);
+                return;
+            }
+
+            // Send the attachment in the message channel
+            await webhook.send(stickerMsg);
+            deleteMsg(msg);
+        }
+    } catch (error) {
+        console.error(error);
     }
 };
 
