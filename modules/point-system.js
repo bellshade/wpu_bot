@@ -24,10 +24,9 @@ const pointSystem = async (msg, client, prisma) => {
             try {
                 if (!hasKetuaRole) return;
                 let members = await getUserFromMention(getUserMention, msg.guild);
+
                 const embed = new MessageEmbed();
-                if (!members) {
-                    members = msg.member;
-                }
+                if (!members) members = msg.member;
 
                 const ketuaData = await prisma.point.findFirst({
                     where: {

@@ -108,19 +108,21 @@ function replyEmbedError(msg, error) {
 }
 
 function splitMessages(msg, withPrefix = false) {
-    let command, args;
-    if (withPrefix) {
-        const split = msg.content.split(/ +/);
-        command = split[0].toLowerCase();
-        args = split.slice(1);
-    } else {
+    const regex = new RegExp(process.env.PREFIX, 'gi');
+    let command, args, split, hasPrefix;
+    hasPrefix = true;
+    split = msg.content.split(/ +/);
+
+    if(!split[0].match(regex)) hasPrefix = false;
+    if(!withPrefix) {
         const withoutPrefix = msg.content.slice(process.env.PREFIX.length);
-        const split = withoutPrefix.split(/ +/);
-        command = split[0].toLowerCase();
-        args = split.slice(1);
+        split = withoutPrefix.split(/ +/);
     }
 
-    return { command, args };
+    command = split[0].toLowerCase();
+    args = split.slice(1);
+
+    return { command, args, hasPrefix };
 }
 
 function checkPermission(msg, guildMember) {
@@ -128,9 +130,9 @@ function checkPermission(msg, guildMember) {
     return new Promise((resolve) => {
         if (
             guildMember.roles.highest.position >=
-        msg.guild.me.roles.highest.position &&
-        msg.member.roles.highest.position ||
-      msg.guild.ownerId == guildMember.id
+            msg.guild.me.roles.highest.position &&
+            msg.member.roles.highest.position ||
+            msg.guild.ownerId == guildMember.id
         ) {
             sendMsg(msg.channel, { embeds: [replyEmbedError(msg, errorMsg)] });
             resolve(false);
@@ -142,43 +144,36 @@ function checkPermission(msg, guildMember) {
 
 async function getChannelData(msg, args) {
     try {
-        let channelByID = args;
-        let channelID;
-        if (args === undefined) {
-            channelID = msg.channel.id;
-        } else {
-            channelID = channelByID;
-        }
-        let channel;
-        try {
-            channel = await msg.guild.channels.cache.get(channelID);
-        } catch (error) {
-            console.error();
-        }
-        return channel;
+        const mentions = msg.mentions;
+        const channels = msg.guild.channels;
+
+        const mention = mentions.channels.first();
+        let channelId = msg.channel.id;
+
+        if (args) channelId = args;
+        if (mention) channelId = mention.id;
+
+        return await channels.fetch(channelId);
     } catch (error) {
         console.error(error);
+        return false;
     }
 }
 
 async function getRoleData(msg, args) {
     try {
-        let mention = msg.mentions.roles.first();
-        let roleID;
-        if (!mention) {
-            roleID = args;
-        } else {
-            roleID = mention.id;
-        }
-        let role;
-        try {
-            role = msg.guild.roles.cache.get(roleID);
-        } catch (error) {
-            console.error(error);
-        }
-        return role;
+        const mentions = msg.mentions;
+        const roles = msg.guild.roles;
+
+        const mention = mentions.roles.first();
+        let roleId = args;
+
+        if (mention) roleId = mention.id;
+
+        return await roles.fetch(roleId);
     } catch (error) {
         console.log(error);
+        return false;
     }
 }
 
