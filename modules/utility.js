@@ -143,22 +143,14 @@ function checkPermission(msg, guildMember) {
 
 async function getChannelData(msg, args) {
     try {
-        let channelByID = args;
-        let channelID;
-        if (args === undefined) {
-            channelID = msg.channel.id;
-        } else {
-            channelID = channelByID;
-        }
-        let channel;
-        try {
-            channel = await msg.guild.channels.cache.get(channelID);
-        } catch (error) {
-            console.error();
-        }
-        return channel;
+        const channels = msg.guild.channels;
+        let channelId = msg.channel.id;
+
+        if (args) channelId = args;
+        return await channels.fetch(channelId);
     } catch (error) {
         console.error(error);
+        return false;
     }
 }
 
@@ -180,6 +172,7 @@ async function getRoleData(msg, args) {
         return role;
     } catch (error) {
         console.log(error);
+        return false;
     }
 }
 
