@@ -9,7 +9,6 @@ const { MessageEmbed } = require('discord.js');
 const pointSystem = async (msg, client, prisma) => {
     try {
         const { command, args } = splitMessages(msg);
-        if (msg.webhookId || msg.author.bot) return;
 
         const staffRole = msg.member.roles.cache.some((roles) =>
             JSON.parse(process.env.ROLES_STAFF).includes(roles.id)
