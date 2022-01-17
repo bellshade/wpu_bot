@@ -26,14 +26,15 @@ const Stickers = async (msg) => {
             };
 
             if(msg.mentions && msg.mentions.repliedUser) {
-                const replieduser = msg.mentions.repliedUser;
+                const referenceMessage = await msg.fetchReference();
+                const member = referenceMessage.member;
                 stickerEmbed = new MessageEmbed()
                     .setColor('#992d22')
                     .setAuthor({
-                        name: `${replieduser.username}`,
-                        iconURL: `${replieduser.displayAvatarURL({ dynamic: true })}`,
+                        name: `${member.displayName}`,
+                        iconURL: `${member.displayAvatarURL({ dynamic: true })}`,
                     })
-                    .setDescription(`**reply to:** ${msg.content}`);
+                    .setDescription(`**reply to:** ${referenceMessage.content}`);
                 stickerMsg.embeds = [stickerEmbed];
             }
 
