@@ -1,22 +1,15 @@
-const {
-    splitMessages,
-    sendMsg,
-    getUserFromMention,
-    embedError,
-} = require('./utility');
+const { splitMessages, sendMsg, getUserFromMention, embedError } = require('./utility');
 const { MessageEmbed } = require('discord.js');
 
 const pointSystem = async (msg, client, prisma) => {
     try {
         const { command, args } = splitMessages(msg);
 
-        const staffRole = msg.member.roles.cache.some((roles) =>
-            JSON.parse(process.env.ROLES_STAFF).includes(roles.id)
-        );
+        const staffRole = msg.member.roles.cache.some((roles) => JSON.parse(process.env.ROLES_STAFF).includes(roles.id));
 
         const hasKetuaRole = msg.member.roles.cache.has(process.env.ROLE_KETUA);
         const getUserMention = args[0];
-        const pointValue = parseInt(args[1]);
+        const pointValue = parseInt(args[0]);
 
         // Untuk mengecek profile moderator
         if (command === 'modprofile') {
@@ -33,9 +26,7 @@ const pointSystem = async (msg, client, prisma) => {
                     },
                 });
 
-                const teamSide = members.roles.cache.has(process.env.ROLE_BELLSHADE)
-                    ? 'Bellshade Team'
-                    : 'Mod Team';
+                const teamSide = members.roles.cache.has(process.env.ROLE_BELLSHADE) ? 'Bellshade Team' : 'Mod Team';
 
                 if (!ketuaData) {
                     embed.setDescription(`<@${members.id}> didn't have any points`);
@@ -96,38 +87,49 @@ const pointSystem = async (msg, client, prisma) => {
         if (command === 'addpoint') {
             try {
                 if (!staffRole) return;
-                let members = await getUserFromMention(getUserMention, msg.guild);
-                if (!members) return msg.reply('Please enter a valid user');
-                const points = await prisma.point.upsert({
-                    where: {
-                        ketua_id: members.user.id,
-                    },
-                    update: {
-                        ketua_point: { increment: pointValue },
-                        author_name: msg.author.username,
-                        author_id: msg.author.id,
-                    },
-                    create: {
-                        ketua_id: members.user.id,
-                        ketua_name: members.user.username,
-                        ketua_point: 1,
-                        author_name: msg.author.username,
-                        author_id: msg.author.id,
-                    },
-                });
-                const embed = new MessageEmbed()
-                    .setTitle('WPU for Moderator')
-                    .setThumbnail(msg.guild.iconURL({ dynamic: true }))
-                    .setDescription(
-                        `**${msg.author.tag} add ${pointValue} point to ${members.user.tag}.** \n Now ${members.user.tag} have ${points.ketua_point} points`
-                    )
-                    .setFooter({
-                        text: `Command used by: ${msg.author.tag}`,
-                        iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
-                    });
-                sendMsg(msg.channel, {
-                    embeds: [embed],
-                });
+                const members = [];
+                for (let i = 1; i < args.length; i++) {
+                    const data = args[i];
+                    const member = await getUserFromMention(data, msg.guild);
+                    if (!member || member.bot) continue; // bukan user
+                    members.push(member);
+                }
+                for (const member of members) {
+                    try {
+                        const points = await prisma.point.upsert({
+                            where: {
+                                ketua_id: member.user.id,
+                            },
+                            update: {
+                                ketua_point: { increment: pointValue },
+                                author_name: msg.author.username,
+                                author_id: msg.author.id,
+                            },
+                            create: {
+                                ketua_id: member.user.id,
+                                ketua_name: member.user.username,
+                                ketua_point: pointValue,
+                                author_name: msg.author.username,
+                                author_id: msg.author.id,
+                            },
+                        });
+                        const embed = new MessageEmbed()
+                            .setTitle('WPU for Moderator')
+                            .setThumbnail(msg.guild.iconURL({ dynamic: true }))
+                            .setDescription(
+                                `**${msg.author.tag} add ${pointValue} point to ${member.user.tag}.** \n Now ${member.user.tag} have ${points.ketua_point} points`
+                            )
+                            .setFooter({
+                                text: `Command used by: ${msg.author.tag}`,
+                                iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
+                            });
+                        sendMsg(msg.channel, {
+                            embeds: [embed],
+                        });
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
             } catch (error) {
                 console.log(error);
                 return sendMsg(msg.channel, {
@@ -144,38 +146,50 @@ const pointSystem = async (msg, client, prisma) => {
         if (command === 'decpoint') {
             try {
                 if (!staffRole) return;
-                let members = await getUserFromMention(getUserMention, msg.guild);
-                if (!members) return msg.reply('Please enter a valid user');
-                const points = await prisma.point.upsert({
-                    where: {
-                        ketua_id: members.user.id,
-                    },
-                    update: {
-                        ketua_point: { decrement: pointValue },
-                        author_name: msg.author.username,
-                        author_id: msg.author.id,
-                    },
-                    create: {
-                        ketua_id: members.user.id,
-                        ketua_name: members.user.username,
-                        ketua_point: 0,
-                        author_name: msg.author.username,
-                        author_id: msg.author.id,
-                    },
-                });
-                const embed = new MessageEmbed()
-                    .setTitle('WPU for Moderator')
-                    .setThumbnail(msg.guild.iconURL({ dynamic: true }))
-                    .setDescription(
-                        `**${msg.author.tag} remove ${pointValue} point to ${members.user.tag}.** \n Now ${members.user.tag} have ${points.ketua_point} points`
-                    )
-                    .setFooter({
-                        text: `Command used by: ${msg.author.tag}`,
-                        iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
-                    });
-                sendMsg(msg.channel, {
-                    embeds: [embed],
-                });
+                const members = [];
+                for (let i = 1; i < args.length; i++) {
+                    const data = args[i];
+                    const member = await getUserFromMention(data, msg.guild);
+                    if (!member || member.bot) continue; // bukan user
+                    members.push(member);
+                }
+
+                for (const member of members) {
+                    try {
+                        const points = await prisma.point.upsert({
+                            where: {
+                                ketua_id: member.user.id,
+                            },
+                            update: {
+                                ketua_point: { decrement: pointValue },
+                                author_name: msg.author.username,
+                                author_id: msg.author.id,
+                            },
+                            create: {
+                                ketua_id: member.user.id,
+                                ketua_name: member.user.username,
+                                ketua_point: 0,
+                                author_name: msg.author.username,
+                                author_id: msg.author.id,
+                            },
+                        });
+                        const embed = new MessageEmbed()
+                            .setTitle('WPU for Moderator')
+                            .setThumbnail(msg.guild.iconURL({ dynamic: true }))
+                            .setDescription(
+                                `**${msg.author.tag} remove ${pointValue} point to ${member.user.tag}.** \n Now ${member.user.tag} have ${points.ketua_point} points`
+                            )
+                            .setFooter({
+                                text: `Command used by: ${msg.author.tag}`,
+                                iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
+                            });
+                        sendMsg(msg.channel, {
+                            embeds: [embed],
+                        });
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
             } catch (error) {
                 console.log(error);
                 return sendMsg(msg.channel, {
