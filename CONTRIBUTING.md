@@ -1,19 +1,18 @@
-# peraturan dan pedoman kontribusi
+# Peraturan dan Pedoman Kontribusi.
 
-selamat datang di repositori wpu bot, sebelum mengirimkan pull request, pastikan kamu
-membaca seluruh dari peraturan dari repositori.
+Selamat datang di repositori wpu bot, sebelum mengirimkan pull request, pastikan kamu membaca seluruh peraturan dari repositori ini.
 
-## sebelum kontribusi
+## Sebelum berkontribusi
 
-kami berterima kasih karena anda telah bekontribusi di wpu bot ini. kami memiliki beberapa persayaratan
-yang harus kamu penuhi antara lain
-- hasil pull request adalah kerja dari anda dan tidak ada bersifat plagiat
-  - jika bersifat plagiat maka pull request akan di **close**
-- hasil pull request kamu akan terdistribusi dibawah lisensi  [GNU](https://github.com/bellshade/wpu_bot/blob/main/LICENSE)
-- hasil pull requet kamu harus memenuhi standar dan style kode kami.
+Kami berterima kasih karena anda telah bekontribusi di wpu bot ini. 
+Kami memiliki beberapa persyaratan yang harus kamu penuhi antara lain:
+- Hasil pull request adalah kerja dari anda dan tidak bersifat plagiat
+  - Jika bersifat plagiat maka pull request akan di **close**
+- Hasil pull request kamu akan terdistribusi di bawah lisensi [GNU](https://github.com/bellshade/wpu_bot/blob/main/LICENSE)
+- Hasil pull request kamu harus memenuhi standar dan style kode kami.
 
-## pesan commit
-setiap pesan commit memiliki tujuan masing-masing yaitu
+## Pesan Commit
+Setiap pesan commit memiliki tujuan masing-masing yaitu:
 
 - ``fix:``: yaitu commit ini memiliki pesan file yang akan diperbaiki
 - ``add:``: yaitu commit ini memiliki pesan file yang akan ditambah
