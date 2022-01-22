@@ -113,6 +113,13 @@ const pointSystem = async (msg, client, prisma) => {
                                 author_id: msg.author.id,
                             },
                         });
+                        await prisma.point_history.create({
+                            data: {
+                                point_id: points.id,
+                                change: `+${pointValue}`,
+                                author_id: msg.author.id
+                            }
+                        });
                         const embed = new MessageEmbed()
                             .setTitle('WPU for Moderator')
                             .setThumbnail(msg.guild.iconURL({ dynamic: true }))
@@ -172,6 +179,13 @@ const pointSystem = async (msg, client, prisma) => {
                                 author_name: msg.author.username,
                                 author_id: msg.author.id,
                             },
+                        });
+                        await prisma.point_history.create({
+                            data: {
+                                point_id: points.id,
+                                change: `-${pointValue}`,
+                                author_id: msg.author.id
+                            }
                         });
                         const embed = new MessageEmbed()
                             .setTitle('WPU for Moderator')
