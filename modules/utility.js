@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageMentions: { USERS_PATTERN }} = require('discord.js');
 
 function checkRoles(msg) {
     // Check if they have one of many roles
@@ -18,15 +18,11 @@ async function getUserFromMention(mention, guild) {
     try {
         if (!mention) return false;
 
-        if (mention.startsWith('<@') && mention.endsWith('>')) {
-            mention = mention.slice(2, -1);
+        // The id is the first and only match found by the RegEx.
+        const matches = mention.match(USERS_PATTERN);
+        if(matches) return await guild.members.fetch(matches[1]);
 
-            if (mention.startsWith('!')) {
-                mention = mention.slice(1);
-            }
-        }
-
-        return await guild.members.fetch(mention);
+        return false;
     } catch (error) {
         console.log(error);
         return false;
