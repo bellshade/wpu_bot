@@ -33,6 +33,13 @@ async function getUserFromMention(mention, guild) {
     }
 }
 
+function buildFooter(msg) {
+    return {
+        text: `Command used by: ${msg.author.tag}`,
+        iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
+    };
+}
+
 function embedError(msg = 'Error') {
     return new MessageEmbed()
         .setDescription(`:x: ${msg}`)
@@ -192,4 +199,5 @@ module.exports = {
     checkPermission,
     getChannelData,
     getRoleData,
+    buildFooter
 };

@@ -1,32 +1,35 @@
-const { splitMessages, sendMsg, getUserFromMention, embedError } = require('./utility');
+const { splitMessages, sendMsg, getUserFromMention, embedError, buildFooter } = require('./utility');
 const { MessageEmbed } = require('discord.js');
+const ROLE_STAFF_ID = process.env.ROLES_STAFF;
+const ROLE_KETUA_ID = process.env.ROLE_KETUA;
+const ROLE_BELLSHADE_ID = process.env.ROLE_BELLSHADE;
 
 const pointSystem = async (msg, client, prisma) => {
     try {
         const { command, args } = splitMessages(msg);
-
-        const staffRole = msg.member.roles.cache.some((roles) => JSON.parse(process.env.ROLES_STAFF).includes(roles.id));
-
-        const hasKetuaRole = msg.member.roles.cache.has(process.env.ROLE_KETUA);
-        const getUserMention = args[0];
-        const pointValue = parseInt(args[0]);
+        const roles = msg.member.roles;
+        const channel = msg.channel;
+        const guild = msg.guild;
+        const staffRole = roles.cache.some(role => JSON.parse(ROLE_STAFF_ID).includes(role.id));
+        const hasKetuaRole = roles.cache.has(ROLE_KETUA_ID);
 
         // Untuk mengecek profile moderator
         if (command === 'modprofile') {
             try {
                 if (!hasKetuaRole) return;
-                let members = await getUserFromMention(getUserMention, msg.guild);
 
+                const getUserMention = args[0];
                 const embed = new MessageEmbed();
+                let members = await getUserFromMention(getUserMention, guild);
+
                 if (!members) members = msg.member;
 
+                const teamSide = members.roles.cache.has(ROLE_BELLSHADE_ID) ? 'Bellshade Team' : 'Mod Team';
                 const ketuaData = await prisma.point.findFirst({
                     where: {
-                        ketua_id: members.user.id,
-                    },
+                        ketua_id: members.user.id
+                    }
                 });
-
-                const teamSide = members.roles.cache.has(process.env.ROLE_BELLSHADE) ? 'Bellshade Team' : 'Mod Team';
 
                 if (!ketuaData) {
                     embed.setDescription(`<@${members.id}> didn't have any points`);
@@ -67,19 +70,13 @@ const pointSystem = async (msg, client, prisma) => {
                                 inline: true,
                             }
                         )
-                        .setFooter({
-                            text: `Command used by: ${msg.author.tag}`,
-                            iconURL: `${msg.author.displayAvatarURL({
-                                dynamic: true,
-                            })}`,
-                        });
+                        .setFooter(buildFooter(msg));
                 }
-                sendMsg(msg.channel, { embeds: [embed] });
+                sendMsg(channel, { embeds: [embed] });
             } catch (error) {
                 console.log(error);
-                return sendMsg(msg.channel, {
-                    embeds: [embedError('An error occurred while executing the command.')],
-                });
+                const embed = embedError('An error occurred while executing the command.');
+                return sendMsg(channel, { embeds: [embed] });
             }
         }
 
@@ -87,65 +84,29 @@ const pointSystem = async (msg, client, prisma) => {
         if (command === 'addpoint') {
             try {
                 if (!staffRole) return;
-                const members = [];
-                for (let i = 1; i < args.length; i++) {
-                    const data = args[i];
-                    const member = await getUserFromMention(data, msg.guild);
-                    if (!member || member.bot) continue; // bukan user
-                    members.push(member);
-                }
+
+                const pointValue = args[0];
+                const members = await getMembers(args, guild);
+
                 for (const member of members) {
                     try {
-                        const points = await prisma.point.upsert({
-                            where: {
-                                ketua_id: member.user.id,
-                            },
-                            update: {
-                                ketua_point: { increment: pointValue },
-                                author_name: msg.author.username,
-                                author_id: msg.author.id,
-                            },
-                            create: {
-                                ketua_id: member.user.id,
-                                ketua_name: member.user.username,
-                                ketua_point: pointValue,
-                                author_name: msg.author.username,
-                                author_id: msg.author.id,
-                            },
-                        });
-                        await prisma.point_history.create({
-                            data: {
-                                point_id: points.id,
-                                change: `+${pointValue}`,
-                                author_id: msg.author.id
-                            }
-                        });
+                        const points = await updatePoint(prisma, msg.author, member, pointValue, 'add');
                         const embed = new MessageEmbed()
                             .setTitle('WPU for Moderator')
-                            .setThumbnail(msg.guild.iconURL({ dynamic: true }))
+                            .setThumbnail(guild.iconURL({ dynamic: true }))
                             .setDescription(
                                 `**${msg.author.tag} add ${pointValue} point to ${member.user.tag}.** \n Now ${member.user.tag} have ${points.ketua_point} points`
                             )
-                            .setFooter({
-                                text: `Command used by: ${msg.author.tag}`,
-                                iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
-                            });
-                        sendMsg(msg.channel, {
-                            embeds: [embed],
-                        });
+                            .setFooter(buildFooter(msg));
+
+                        sendMsg( channel, { embeds: [embed] });
                     } catch (error) {
                         console.error(error);
                     }
                 }
             } catch (error) {
                 console.log(error);
-                return sendMsg(msg.channel, {
-                    embeds: [
-                        embedError(
-                            'An error occurred while executing the command. Or because you didn\'t provide the valid number.'
-                        ),
-                    ],
-                });
+                return sendError(channel);
             }
         }
 
@@ -153,71 +114,100 @@ const pointSystem = async (msg, client, prisma) => {
         if (command === 'decpoint') {
             try {
                 if (!staffRole) return;
-                const members = [];
-                for (let i = 1; i < args.length; i++) {
-                    const data = args[i];
-                    const member = await getUserFromMention(data, msg.guild);
-                    if (!member || member.bot) continue; // bukan user
-                    members.push(member);
-                }
+
+                const pointValue = args[0];
+                const members = await getMembers(args, guild);
 
                 for (const member of members) {
                     try {
-                        const points = await prisma.point.upsert({
-                            where: {
-                                ketua_id: member.user.id,
-                            },
-                            update: {
-                                ketua_point: { decrement: pointValue },
-                                author_name: msg.author.username,
-                                author_id: msg.author.id,
-                            },
-                            create: {
-                                ketua_id: member.user.id,
-                                ketua_name: member.user.username,
-                                ketua_point: 0,
-                                author_name: msg.author.username,
-                                author_id: msg.author.id,
-                            },
-                        });
-                        await prisma.point_history.create({
-                            data: {
-                                point_id: points.id,
-                                change: `-${pointValue}`,
-                                author_id: msg.author.id
-                            }
-                        });
+                        const points = await updatePoint(prisma, msg.author, member, pointValue, 'dec');
                         const embed = new MessageEmbed()
                             .setTitle('WPU for Moderator')
-                            .setThumbnail(msg.guild.iconURL({ dynamic: true }))
+                            .setThumbnail(guild.iconURL({ dynamic: true }))
                             .setDescription(
                                 `**${msg.author.tag} remove ${pointValue} point to ${member.user.tag}.** \n Now ${member.user.tag} have ${points.ketua_point} points`
                             )
-                            .setFooter({
-                                text: `Command used by: ${msg.author.tag}`,
-                                iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
-                            });
-                        sendMsg(msg.channel, {
-                            embeds: [embed],
-                        });
+                            .setFooter(buildFooter(msg));
+
+                        sendMsg( channel, { embeds: [embed] });
                     } catch (error) {
                         console.error(error);
                     }
                 }
             } catch (error) {
                 console.log(error);
-                return sendMsg(msg.channel, {
-                    embeds: [
-                        embedError(
-                            'An error occurred while executing the command. Or because you didn\'t provide the valid number.'
-                        ),
-                    ],
-                });
+                return sendError(channel);
             }
         }
     } catch (error) {
         console.error(error);
     }
+};
+
+const sendError = (channel) => {
+    const embed = embedError(`An error occurred while executing the command. Or because you didn't provide the valid number.`);
+    return sendMsg(channel, { embeds: [embed] });
+};
+
+const updatePoint = async (prisma, author, member, pointValue, type) => {
+    let ketua_point_update, ketua_point_create;
+
+    try {
+        switch (type) {
+            case 'add':
+                ketua_point_update = { increment: pointValue };
+                ketua_point_create = pointValue;
+                break;
+
+            case 'dec':
+                ketua_point_update = { decrement: pointValue };
+                ketua_point_create = `-${pointValue}`;
+                break;
+        }
+
+        const points = await prisma.point.upsert({
+            where: {
+                ketua_id: member.user.id,
+            },
+            update: {
+                ketua_point: ketua_point_update,
+                author_name: author.username,
+                author_id: author.id,
+            },
+            create: {
+                ketua_id: member.user.id,
+                ketua_name: member.user.username,
+                ketua_point: ketua_point_create,
+                author_name: author.username,
+                author_id: author.id,
+            },
+        });
+
+        await prisma.point_history.create({
+            data: {
+                point_id: points.id,
+                change: ketua_point_create,
+                author_id: author.id
+            }
+        });
+
+        return points;
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+const getMembers = async (args, guild) => {
+    const members = [];
+
+    for (let i = 1; i < args.length; i++) {
+        const data = args[i];
+        const member = await getUserFromMention(data, guild);
+        if (!member || member.bot) continue; // bukan user
+        members.push(member);
+    }
+
+    return members;
 };
 
 module.exports = {
