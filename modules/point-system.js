@@ -207,13 +207,13 @@ const getMembers = async (args, guild) => {
         const member = await getUserFromMention(data, guild);
         if (!member || member.bot) continue; // bukan user
         members.push(member);
-        position.push(position);
+        position.push(i);
     }
 
     return {
         members,
         first: position[0],
-        last: position[-1]
+        last: position[-1] ?? -1
     };
 };
 
