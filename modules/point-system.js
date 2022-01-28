@@ -85,17 +85,17 @@ const pointSystem = async (msg, client, prisma) => {
             try {
                 if (!staffRole) return;
 
-                const pointValue = args[0];
-                const members = await getMembers(args, guild);
+                const { members, first, last } = await getMembers(args, guild);
+                const [pointValue, ...reason] = args.slice(first, last);
 
                 for (const member of members) {
                     try {
-                        const points = await updatePoint(prisma, msg.author, member, pointValue, 'add');
+                        const points = await updatePoint(prisma, msg.author, member, pointValue, 'add', reason.join(' '));
                         const embed = new MessageEmbed()
                             .setTitle('WPU for Moderator')
                             .setThumbnail(guild.iconURL({ dynamic: true }))
                             .setDescription(
-                                `**${msg.author.tag} add ${pointValue} point to ${member.user.tag}.** \n Now ${member.user.tag} have ${points.ketua_point} points`
+                                `**${msg.author.tag} add ${pointValue} point to ${member.user.tag}.** reason: ${reason.join(' ')} \n Now ${member.user.tag} have ${points.ketua_point} points`
                             )
                             .setFooter(buildFooter(msg));
 
@@ -115,17 +115,17 @@ const pointSystem = async (msg, client, prisma) => {
             try {
                 if (!staffRole) return;
 
-                const pointValue = args[0];
-                const members = await getMembers(args, guild);
+                const { members, first, last } = await getMembers(args, guild);
+                const [pointValue, ...reason] = args.slice(first, last);
 
                 for (const member of members) {
                     try {
-                        const points = await updatePoint(prisma, msg.author, member, pointValue, 'dec');
+                        const points = await updatePoint(prisma, msg.author, member, pointValue, 'dec', reason.join(' '));
                         const embed = new MessageEmbed()
                             .setTitle('WPU for Moderator')
                             .setThumbnail(guild.iconURL({ dynamic: true }))
                             .setDescription(
-                                `**${msg.author.tag} remove ${pointValue} point to ${member.user.tag}.** \n Now ${member.user.tag} have ${points.ketua_point} points`
+                                `**${msg.author.tag} remove ${pointValue} point to ${member.user.tag}.** reason: ${reason.join(' ')} \n Now ${member.user.tag} have ${points.ketua_point} points`
                             )
                             .setFooter(buildFooter(msg));
 
@@ -149,7 +149,7 @@ const sendError = (channel) => {
     return sendMsg(channel, { embeds: [embed] });
 };
 
-const updatePoint = async (prisma, author, member, pointValue, type) => {
+const updatePoint = async (prisma, author, member, pointValue, type, reason) => {
     let ketua_point_update, ketua_point_create;
 
     try {
@@ -187,7 +187,8 @@ const updatePoint = async (prisma, author, member, pointValue, type) => {
             data: {
                 point_id: points.id,
                 change: ketua_point_create,
-                author_id: author.id
+                author_id: author.id,
+                reason: reason
             }
         });
 
@@ -199,15 +200,21 @@ const updatePoint = async (prisma, author, member, pointValue, type) => {
 
 const getMembers = async (args, guild) => {
     const members = [];
+    const position = [];
 
     for (let i = 1; i < args.length; i++) {
         const data = args[i];
         const member = await getUserFromMention(data, guild);
         if (!member || member.bot) continue; // bukan user
         members.push(member);
+        position.push(position);
     }
 
-    return members;
+    return {
+        members,
+        first: position[0],
+        last: position[-1]
+    };
 };
 
 module.exports = {
