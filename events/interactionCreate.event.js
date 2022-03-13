@@ -2,13 +2,18 @@ module.exports = {
     name: 'interactionCreate',
     once: false,
     execute(interaction) {
-        if (!interaction.isCommand()) return;
-
-        const { commandName, client } = interaction;
-        const command = client.commands.get(commandName);
-
         try {
-            command.execute(interaction);
+            const { commandName, customId, client } = interaction;
+            
+            if (interaction.isCommand()) {
+                const command = client.commands.get(commandName);
+                command.execute(interaction);
+            }
+            
+            if (interaction.isSelectMenu()) {
+                const command = client.commands.get(customId);
+                command.selectMenu(interaction);
+            }
         } catch (error) {
             console.error(error);
         }
