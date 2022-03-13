@@ -19,12 +19,11 @@ exports.execute = async (interaction) => {
             .addFields(
                 {
                     name: 'Available Commands',
-                    value: `${commandList}`,
+                    value: `${commandList.join("")}`,
                     inline: false,
                 }
             )
             .setTimestamp();
-
 
         await interaction.editReply({embeds: [embed]});
 
