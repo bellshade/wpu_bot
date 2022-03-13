@@ -4,7 +4,7 @@ const data = require('../data/sticker.json');
 
 exports.command = new SlashCommandBuilder()
     .setName('sticker-list')
-    .setDescription('View all available sticker!')
+    .setDescription('View all available sticker!');
 
 exports.execute = async (interaction) => {
     try {
@@ -19,7 +19,7 @@ exports.execute = async (interaction) => {
             .addFields(
                 {
                     name: 'Available Commands',
-                    value: `${commandList.join("")}`,
+                    value: `${commandList.join('')}`,
                     inline: false,
                 }
             )

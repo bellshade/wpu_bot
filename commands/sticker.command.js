@@ -7,22 +7,33 @@ const data = require('../data/sticker.json');
 const keys = Object.keys(data);
 
 const constructDataOptions = (data) => {
-    return data.map((x, i) => {
+    return data.map(x => {
         return {
             label: `${keys.indexOf(x) + 1} - ${x}`,
             description: x,
             value: x
-        }
-    })
-}
+        };
+    });
+};
 
 const getDataList = (limit, initial) => {
-    return keys.slice(initial, initial + limit)
-}
+    return keys.slice(initial, initial + limit);
+};
+
+const basicEndHandler = async ({ reason, paginator }) => {
+    // This is a basic handler that will delete the message containing the pagination.
+    try {
+        console.log(`The pagination has ended: ${reason}`);
+        if (paginator.message.deletable) await paginator.message.delete();
+    } catch (error) {
+        console.log('There was an error when deleting the message: ');
+        console.log(error);
+    }
+};
 
 exports.command = new SlashCommandBuilder()
     .setName('sticker')
-    .setDescription('Preview available sticker')
+    .setDescription('Preview available sticker');
 
 exports.execute = async (interaction) => {
     try {
@@ -36,11 +47,11 @@ exports.execute = async (interaction) => {
 exports.selectMenu = async (interaction) => {
     try {
         await interaction.deferUpdate();
-        return main(interaction);        
+        return main(interaction);
     } catch (error) {
         console.error(error);
     }
-}
+};
 
 const main = async (interaction) => {
     const SELECT_LIMIT = 25;
@@ -110,7 +121,7 @@ const main = async (interaction) => {
             }
 
             if (selectOptionsIdentifier < 0) {
-                selectOptionsIdentifier = MAX_SELECTIONS + (selectOptionsIdentifier % MAX_SELECTIONS);
+                selectOptionsIdentifier = MAX_SELECTIONS + selectOptionsIdentifier % MAX_SELECTIONS;
             } else if (selectOptionsIdentifier >= MAX_SELECTIONS) {
                 selectOptionsIdentifier %= MAX_SELECTIONS;
             }
@@ -150,7 +161,7 @@ const main = async (interaction) => {
 
             return newEmbed;
         }
-        
+
         return paginator.currentPage;
     };
 
@@ -199,4 +210,4 @@ const main = async (interaction) => {
 
     await actionRowPaginator.send();
     return actionRowPaginator.message;
-}
+};
