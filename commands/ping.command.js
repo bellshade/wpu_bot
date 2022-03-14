@@ -12,7 +12,7 @@ exports.permissions = [
         type: 'ROLE',
         permisssion: true
     }
-]
+];
 
 exports.execute = async (interaction) => {
     interaction.reply({content:'Pong!', ephemeral: true});

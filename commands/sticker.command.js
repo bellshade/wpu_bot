@@ -42,7 +42,7 @@ exports.permissions = [
         type: 'ROLE',
         permisssion: true
     }
-]
+];
 
 exports.execute = async (interaction) => {
     try {
