@@ -11,6 +11,7 @@ exports.execute = async (interaction) => {
 
         const role = interaction.options.getRole('target');
         const members = role.members.map((member) => member.user.username);
+        const memberString = members.join(', ');
         const roleInfoEmbed = new MessageEmbed()
             .setColor('#992d22')
             .setDescription(`**${role.name}**`)
@@ -26,7 +27,7 @@ exports.execute = async (interaction) => {
                     value: new Date(role.createdTimestamp).toLocaleString(),
                     inline: false,
                 },
-                { name: 'Members', value: members.join(', '), inline: false },
+                { name: 'Members', value: memberString.length > 1024 ? memberString.slice(0, 1020) + '...' : memberString, inline: false },
                 { name: 'Role ID', value: role.id, inline: false }
             );
         await interaction.editReply({ embeds: [roleInfoEmbed] });
