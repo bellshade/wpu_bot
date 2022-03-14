@@ -6,7 +6,6 @@ const MAHASISWA_ID = process.env.ROLES_MAHASISWA;
 exports.command = new SlashCommandBuilder()
     .setName('userinfo')
     .setDescription('Views your info or other user info!')
-    .setPerm
     .addUserOption((option) =>
         option.setName('target').setDescription('Select a user')
     );
