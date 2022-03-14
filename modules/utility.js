@@ -18,19 +18,22 @@ async function getUserFromMention(mention, guild) {
     try {
         if (!mention) return false;
 
-        if (mention.startsWith('<@') && mention.endsWith('>')) {
-            mention = mention.slice(2, -1);
+        // The id is the first and only match found by the RegEx.
+        const matches = mention.match(/^<@!?(\d+)>$/i);
+        if(matches && matches[1]) return await guild.members.fetch(matches[1]);
 
-            if (mention.startsWith('!')) {
-                mention = mention.slice(1);
-            }
-        }
-
-        return await guild.members.fetch(mention);
+        return false;
     } catch (error) {
         console.log(error);
         return false;
     }
+}
+
+function buildFooter(msg) {
+    return {
+        text: `Command used by: ${msg.author.tag}`,
+        iconURL: `${msg.author.displayAvatarURL({ dynamic: true })}`,
+    };
 }
 
 function embedError(msg = 'Error') {
@@ -192,4 +195,5 @@ module.exports = {
     checkPermission,
     getChannelData,
     getRoleData,
+    buildFooter
 };
