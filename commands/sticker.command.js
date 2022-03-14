@@ -3,6 +3,7 @@ const { MessageEmbed, Collection } = require('discord.js');
 const { PaginatorEvents, ActionRowPaginator } = require('@psibean/discord.js-pagination');
 
 const data = require('../data/sticker.json');
+const MAHASISWA_ID = process.env.ROLES_MAHASISWA;
 
 const keys = Object.keys(data);
 
@@ -34,6 +35,14 @@ const basicEndHandler = async ({ reason, paginator }) => {
 exports.command = new SlashCommandBuilder()
     .setName('sticker')
     .setDescription('Preview available sticker');
+
+exports.permissions = [
+    {
+        id: MAHASISWA_ID,
+        type: 'ROLE',
+        permisssion: true
+    }
+];
 
 exports.execute = async (interaction) => {
     try {

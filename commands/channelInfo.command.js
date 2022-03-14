@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
+const MAHASISWA_ID = process.env.ROLES_MAHASISWA;
+
 exports.command = new SlashCommandBuilder()
     .setName('channelinfo')
     .setDescription('View information about the given channel')
@@ -10,6 +12,15 @@ exports.command = new SlashCommandBuilder()
             .setDescription('Select a channel')
             .setRequired(true)
     );
+
+exports.permissions = [
+    {
+        id: MAHASISWA_ID,
+        type: 'ROLE',
+        permisssion: true
+    }
+];
+
 exports.execute = async (interaction) => {
     try {
         await interaction.deferReply();
