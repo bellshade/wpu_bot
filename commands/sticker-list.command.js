@@ -1,10 +1,20 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
+
 const data = require('../data/sticker.json');
+const MAHASISWA_ID = process.env.ROLES_MAHASISWA;
 
 exports.command = new SlashCommandBuilder()
     .setName('sticker-list')
     .setDescription('View all available sticker!');
+
+exports.permissions = [
+    {
+        id: MAHASISWA_ID,
+        type: 'ROLE',
+        permisssion: true
+    }
+]
 
 exports.execute = async (interaction) => {
     try {

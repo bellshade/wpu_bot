@@ -1,7 +1,20 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
-exports.command = new SlashCommandBuilder().setName('servericon').setDescription('View server icons');
+const MAHASISWA_ID = process.env.ROLES_MAHASISWA;
+
+exports.command = new SlashCommandBuilder()
+    .setName('servericon')
+    .setDescription('View server icons');
+
+exports.permissions = [
+    {
+        id: MAHASISWA_ID,
+        type: 'ROLE',
+        permisssion: true
+    }
+]
+
 exports.execute = async (interaction) => {
     try {
         await interaction.deferReply();

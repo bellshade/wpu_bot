@@ -1,10 +1,20 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
+const MAHASISWA_ID = process.env.ROLES_MAHASISWA;
+
 exports.command = new SlashCommandBuilder()
     .setName('avatar')
     .setDescription('View your or another user avatar!')
     .addUserOption(option => option.setName('target').setDescription('Select a user'));
+
+exports.permissions = [
+    {
+        id: MAHASISWA_ID,
+        type: 'ROLE',
+        permisssion: true
+    }
+]
 
 exports.execute = async (interaction) => {
     try {
