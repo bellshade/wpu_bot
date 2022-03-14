@@ -86,7 +86,7 @@ const pointSystem = async (msg, client, prisma) => {
                 if (!staffRole) return;
 
                 const { members, first, last } = await getMembers(args, guild);
-                const [pointValue, ...reason] = args.slice(first, last);
+                const [pointValue, ...reason] = args.slice(0, first);
 
                 for (const member of members) {
                     try {
@@ -116,7 +116,7 @@ const pointSystem = async (msg, client, prisma) => {
                 if (!staffRole) return;
 
                 const { members, first, last } = await getMembers(args, guild);
-                const [pointValue, ...reason] = args.slice(first, last);
+                const [pointValue, ...reason] = args.slice(0, first);
 
                 for (const member of members) {
                     try {
