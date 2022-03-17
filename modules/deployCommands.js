@@ -1,5 +1,5 @@
 const fs = require('fs');
-const path = require('path')
+const path = require('path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
@@ -37,8 +37,10 @@ const deploy = async (client) => {
 
         console.log('Started adding application (/) commands permissions.');
 
+        if (!client.application?.owner) await client.application?.fetch();
+
         // Get commands
-        const collection = await await client.guilds.cache.get(GUILD_ID)?.commands.fetch();
+        const collection = await client.guilds.cache.get(GUILD_ID)?.commands.fetch();
 
         collection.forEach(async (command) => {
             try {
