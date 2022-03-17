@@ -24,9 +24,6 @@ exports.command = new SlashCommandBuilder()
         .setName('durations')
         .setDescription('1s, 1m, 1h, 1d max 26d')
         .setRequired(true)
-        .addChoice('1 hour', '1h')
-        .addChoice('1 Day', '1d')
-        .addChoice('Max', '26d')
     )
     .addStringOption(option => option
         .setName('reason')
@@ -54,7 +51,7 @@ exports.execute = async (interaction) => {
         const timeType = durations.slice(-1);
 
         // Check format waktu apakah sudah sesuai
-        if (!['s', 'm', 'h', 'd'].includes()) {
+        if (!['s', 'm', 'h', 'd'].includes(timeType)) {
             await interaction.editReply({ content: 'Incorrect Duration Format', ephemeral: true });
             return;
         }
