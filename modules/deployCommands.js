@@ -38,14 +38,14 @@ const deploy = async (client) => {
         console.log('Started adding application (/) commands permissions.');
 
         // Get commands
-        const collection = await client.application.commands.fetch();
+        const collection = await await client.guilds.cache.get(GUILD_ID)?.commands.fetch();
 
         collection.forEach(async (command) => {
             try {
                 const com = coms.find(x => x.name === command.name);
 
                 if(com) {
-                    await client.application.commands.permissions.set({
+                    await command.permissions.set({
                         command: command.id,
                         permissions: com.permissions
                     });
