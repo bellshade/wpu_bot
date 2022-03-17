@@ -32,7 +32,7 @@ exports.command = new SlashCommandBuilder()
         .setName('reason')
         .setDescription('Reason for timeout')
     )
-    ;
+;
 
 exports.permissions = [
     {
