@@ -33,19 +33,19 @@ const deploy = async (client) => {
         );
 
         console.log('Successfully reloaded application (/) commands.');
-        
-        console.log('Started adding application (/) commands permissions.')
+
+        console.log('Started adding application (/) commands permissions.');
 
         // Get commands
-        const collection = await client.application.commands.fetch()
+        const collection = await client.application.commands.fetch();
 
-        collection.forEach(command => {
+        collection.forEach(async (command) => {
             try {
                 const com = coms.find(x => x.name === command.name);
 
-                if(com){                    
+                if(com) {
                     await client.application.commands.permissions.set({
-                        command: command.id, 
+                        command: command.id,
                         permissions: com.permissions
                     });
                 }
@@ -55,7 +55,7 @@ const deploy = async (client) => {
         });
 
         console.log('Successfully adding application (/) commands permissions.');
-        
+
     } catch (error) {
         console.error(error);
     }

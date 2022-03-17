@@ -14,7 +14,7 @@ const deploy = async () => {
     for (const file of commandFiles) {
         const command = require(`./commands/${file}`);
         const com = command.command;
-        
+
         commands.push(com.toJSON());
     }
 
@@ -29,11 +29,11 @@ const deploy = async () => {
         );
 
         console.log('Successfully reloaded application (/) commands.');
-        
+
         return res;
     } catch (error) {
         console.error(error);
-        return false
+        return false;
     }
 };
 
