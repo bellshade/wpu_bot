@@ -145,6 +145,23 @@ function checkPermission(msg, guildMember) {
     });
 }
 
+function interactionCheckPermission(interaction, guildMember) {
+    const errorMsg = `You can't do this to user with the same or a higher role.`;
+    return new Promise((resolve) => {
+        if (
+            guildMember.roles.highest.position >=
+            interaction.guild.me.roles.highest.position &&
+            interaction.member.roles.highest.position ||
+            interaction.guild.ownerId == guildMember.id
+        ) {
+            interaction.editReply({ embeds: [replyEmbedError(msg, errorMsg)], ephemeral: true });
+            resolve(false);
+        } else {
+            resolve(true);
+        }
+    });
+}
+
 async function getChannelData(msg, args) {
     try {
         const mentions = msg.mentions;
@@ -195,5 +212,6 @@ module.exports = {
     checkPermission,
     getChannelData,
     getRoleData,
-    buildFooter
+    buildFooter,
+    interactionCheckPermission
 };
