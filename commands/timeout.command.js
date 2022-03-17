@@ -69,7 +69,7 @@ exports.execute = async (interaction) => {
 
         const timeoutEmbed = new MessageEmbed()
             .setColor('#992d22')
-            .setDescription(`<@${target}> has been timeout`);
+            .setDescription(`${target} has been timeout`);
 
         await member.timeout(durationMs, reason);
         await interaction.editReply({ embeds: [timeoutEmbed] });
