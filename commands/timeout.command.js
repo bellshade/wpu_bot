@@ -38,7 +38,7 @@ exports.permissions = [
     {
         id:  KETUA_KELAS_ID,
         type: 'ROLE',
-        permisssion: true
+        permission: true
     }
 ];
 
