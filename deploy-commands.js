@@ -13,9 +13,7 @@ const deploy = async () => {
 
     for (const file of commandFiles) {
         const command = require(`./commands/${file}`);
-
         const com = command.command;
-        com.permissions.add(command.permissions);
 
         commands.push(com.toJSON());
     }
@@ -25,14 +23,17 @@ const deploy = async () => {
     try {
         console.log('Started refreshing application (/) commands.');
 
-        await rest.put(
+        const res = await rest.put(
             Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
             { body: commands },
         );
 
         console.log('Successfully reloaded application (/) commands.');
+
+        return res;
     } catch (error) {
         console.error(error);
+        return false;
     }
 };
 
