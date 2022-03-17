@@ -16,4 +16,4 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
-          script: cd ${{ secrets.APP_DIR_PATH }} && git pull main main --rebase --autostash && pm2 restart wpu_bot
+          script: cd ${{ secrets.APP_DIR_PATH }} && git pull main main --rebase --autostash && pm2 restart wpu_bot && npm run deploy
