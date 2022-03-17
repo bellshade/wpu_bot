@@ -14,7 +14,7 @@ const timeCalc = {
 exports.command = new SlashCommandBuilder()
     .setName('timeout')
     .setDescription('Extended timeout command')
-    .setDefaultPermission('false')
+    .setDefaultPermission(false)
     .addUserOption((option) => option
         .setName('target')
         .setDescription('Select a user')
