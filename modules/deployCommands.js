@@ -20,7 +20,7 @@ const deploy = async (client) => {
 
             commands.push(json);
 
-            json.permissions = command.command.permissions;
+            json.permissions = command.permissions;
             coms.push(json);
         }
 

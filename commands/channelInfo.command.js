@@ -17,7 +17,7 @@ exports.permissions = [
     {
         id: MAHASISWA_ID,
         type: 'ROLE',
-        permisssion: true
+        permission: true
     }
 ];
 
