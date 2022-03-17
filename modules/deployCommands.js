@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path')
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
@@ -9,7 +10,7 @@ const TOKEN = process.env.TOKEN;
 const deploy = async (client) => {
     try {
         const commands = [];
-        const commandFiles = fs.readdirSync('../commands').filter(file => file.endsWith('.js'));
+        const commandFiles = fs.readdirSync(path.join('__dirname', '/../commands')).filter(file => file.endsWith('.js'));
 
         const coms = [];
 
