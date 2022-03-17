@@ -27,7 +27,12 @@ exports.command = new SlashCommandBuilder()
         .addChoice('1 hour', '1h')
         .addChoice('1 Day', '1d')
         .addChoice('Max', '26d')
-    );
+    )
+    .addStringOption(option => option
+        .setName('reason')
+        .setDescription('Reason for timeout')
+    )
+    ;
 
 exports.permissions = [
     {
@@ -35,7 +40,7 @@ exports.permissions = [
         type: 'ROLE',
         permisssion: true
     }
-]
+];
 
 exports.execute = async (interaction) => {
     try {
@@ -44,12 +49,13 @@ exports.execute = async (interaction) => {
         const target = interaction.options.getUser('target');
         const member = await interaction.guild.members.fetch(target);
         const durations = interaction.options.getString('durations');
+        const reason = interaction.options.getString('reason') || '';
 
         const timeType = durations.slice(-1);
 
         // Check format waktu apakah sudah sesuai
         if (!['s', 'm', 'h', 'd'].includes()) {
-            await interaction.editReply({ content: 'Incorrect Duration Format' });
+            await interaction.editReply({ content: 'Incorrect Duration Format', ephemeral: true });
             return;
         }
 
@@ -58,17 +64,17 @@ exports.execute = async (interaction) => {
 
         // check apakah durasi melebihi batas maksimum
         if (durationMs >= 2419200000) {
-            msg.reply('Maximal timeout is 27d');
+            await interaction.editReply({ content: 'Maximal timeout is 27d', ephemeral: true });
             return;
         }
 
         if (!await interactionCheckPermission(interaction, member)) return;
-        
+
         const timeoutEmbed = new MessageEmbed()
             .setColor('#992d22')
             .setDescription(`<@${target}> has been timeout`);
 
-        await member.timeout(durationMs, args[1]);
+        await member.timeout(durationMs, reason);
         await interaction.editReply({ embeds: [timeoutEmbed] });
     } catch (error) {
         console.error(error);
