@@ -12,7 +12,7 @@ module.exports = {
         deployCommands(client);
 
         cron.schedule('01 0 * * 1', () => {
-            pointAutomation();
+            pointAutomation(client);
         });
     },
 };
