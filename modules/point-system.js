@@ -155,13 +155,13 @@ const updatePoint = async (prisma, author, member, pointValue, type, reason) => 
     try {
         switch (type) {
             case 'add':
-                ketua_point_update = { increment: pointValue };
-                ketua_point_create = pointValue;
+                ketua_point_update = { increment: parseInt(pointValue) };
+                ketua_point_create = parseInt(pointValue);
                 break;
 
             case 'dec':
-                ketua_point_update = { decrement: pointValue };
-                ketua_point_create = `-${pointValue}`;
+                ketua_point_update = { decrement: parseInt(pointValue) };
+                ketua_point_create = parseInt(`-${pointValue}`);
                 break;
         }
 
