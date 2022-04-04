@@ -5,6 +5,7 @@ const { Timeout } = require('../modules/timeout.js');
 const { Perkenalan } = require('../modules/perkenalan.js');
 const { Info } = require('../modules/info.js');
 const { pointSystem } = require('../modules/point-system.js');
+const { Tag } = require('../modules/tag.js');
 
 module.exports = {
     name: 'messageCreate',
@@ -27,5 +28,7 @@ module.exports = {
         Info(msg, client, prisma);
 
         pointSystem(msg, client, prisma);
+
+        Tag(msg);
     },
 };
