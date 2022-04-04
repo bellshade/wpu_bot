@@ -9,8 +9,7 @@ const Tag = async (msg) => {
         const split = msg.content.split(/ +/);
         const tag = split[1]?.toLowerCase();
         if(!split[0].toLowerCase() == process.env.PREFIX + 'wpu') return;
-        if(data[tag] && tag) {
-            if(!checkSession(msg)) return;
+        if(data[tag] && tag && checkSession(msg)) {
             const ref = msg.reference?.messageId;
             if(ref) {
                 const m = await msg.channel.messages.fetch(ref);
