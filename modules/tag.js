@@ -6,9 +6,6 @@ const Tag = async (msg) => {
     try {
         const split = msg.content.split(/ +/);
         const tag = split[1]?.toLowerCase();
-        console.log(process.env.PREFIX);
-        console.log(tag);
-        console.log(split[0].toLowerCase() == process.env.PREFIX + 'wpu');
         if(split[0].toLowerCase() == process.env.PREFIX + 'wpu' && data[tag] && tag) {
             const ref = msg.reference?.messageId;
             if(ref) {
