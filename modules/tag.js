@@ -1,4 +1,3 @@
-require('dotenv').config();
 const data = require('../data/tag.json');
 
 const { sendMsg } = require('./utility');
