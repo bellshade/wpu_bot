@@ -186,7 +186,7 @@ const updatePoint = async (prisma, author, member, pointValue, type, reason) => 
         await prisma.point_history.create({
             data: {
                 point_id: points.id,
-                change: ketua_point_create,
+                change: `${ketua_point_create}`,
                 author_id: author.id,
                 reason: reason
             }
