@@ -5,6 +5,6 @@
   "rahasia": "_Oops_, sepertinya kamu membeberkan **rahasia/secret** untuk membuka halamanmu, sebelum memberikan informasi harap perhatikan apa yang akan kamu berikan.",
   "channel": "**Perhatikan channelnya!** \nSebelum bertanya, perhatikan apa yang ada di pin atau channel topic, cek kembali apakah kamu sudah berada di channel yang tepat untuk bertanya atau belum.",
   "error": "> _\"Kode ini kenapa error ya padahal udah bener\"_ \nSebutkan error apa yang kamu temukan, hanya memberi kode juga tidak akan menyelesaikan permasalahanmu.",
-  "undefined": "Dapat error seperti ini? \n```\nCannot read properties of undefined (reading \"XYZ\")\n``` \nError tersebut menyatakan bahwa kamu mencoba mengakses/menjalankan sebuah property yang kosong/undefined. Solusinya kamu bisa mengecek ulang nama variable yang akan dijalankan atau cek kembali apa yang kamu masukkan ke dalam property tersebut."
+  "undefined": "Dapat error seperti ini? \n```\nCannot read properties of undefined (reading \"XYZ\")\n``` \nError tersebut menyatakan bahwa kamu mencoba mengakses/menjalankan sebuah property yang kosong/undefined. Solusinya kamu bisa mengecek ulang nama variable yang akan dijalankan atau cek kembali apa yang kamu masukkan ke dalam property tersebut.",
   "nama-channel": "**Perhatikan nama channelnya!** \nJika nama channel diawali dengan `wpu-` artinya channel ini hanya untuk materi seputar video WPU! \nSilahkan ke channel yang tidak berawalan `wpu-` yang bersangkutan dengan pertanyaanmu."
 }
