@@ -9,8 +9,8 @@ const Tag = async (msg) => {
         if(split[0].toLowerCase() == process.env.PREFIX + 'wpu' && data[tag] && tag) {
             const ref = msg.reference?.messageId;
             if(ref) {
-                const m = await msg.channel.messages.fetch(ref);
-                m.reply(data[tag]);
+                const message = await msg.channel.messages.fetch(ref);
+                message.reply(data[tag]);
                 return;
             }
             sendMsg(msg.channel, data[tag]);
