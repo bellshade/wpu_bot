@@ -6,6 +6,10 @@ const { Perkenalan } = require('../modules/perkenalan.js');
 const { Info } = require('../modules/info.js');
 const { pointSystem } = require('../modules/point-system.js');
 const { Tag } = require('../modules/tag.js');
+const { autoThread } = require('../modules/autoThread.js');
+
+const CHANNEL_SHOWCASE_PROJECT = process.env.CHANNEL_SHOWCASE_PROJECT;
+const CHANNEL_SHOWCASE_WORKSPACE = process.env.CHANNEL_SHOWCASE_WORKSPACE;
 
 module.exports = {
     name: 'messageCreate',
@@ -30,5 +34,8 @@ module.exports = {
         pointSystem(msg, client, prisma);
 
         Tag(msg);
+
+        autoThread(msg, client, CHANNEL_SHOWCASE_PROJECT);
+        autoThread(msg, client, CHANNEL_SHOWCASE_WORKSPACE);
     },
 };
