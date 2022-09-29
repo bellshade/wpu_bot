@@ -35,7 +35,7 @@ module.exports = {
 
         Tag(msg);
 
-        autoThread(msg, client, CHANNEL_SHOWCASE_PROJECT);
-        autoThread(msg, client, CHANNEL_SHOWCASE_WORKSPACE);
+        autoThread(msg, client, CHANNEL_SHOWCASE_PROJECT, 'Showcase Project dari');
+        autoThread(msg, client, CHANNEL_SHOWCASE_WORKSPACE, 'Showcase Workspace dari');
     },
 };
