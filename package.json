@@ -18,7 +18,7 @@
     "@discordjs/rest": "^0.2.0-canary.0",
     "@prisma/client": "^3.7.0",
     "@psibean/discord.js-pagination": "^4.0.5",
-    "@vitalets/google-translate-api": "^8.0.0",
+    "@vitalets/google-translate-api": "^9.1.0",
     "canvas": "^2.9.3",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.0",
