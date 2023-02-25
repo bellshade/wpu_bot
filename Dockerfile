@@ -17,6 +17,8 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN npx prisma generate
+
 COPY . .
 
 CMD ["node","index.js"]
