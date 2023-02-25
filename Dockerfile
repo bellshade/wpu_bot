@@ -9,7 +9,8 @@ RUN apk add --update --no-cache \
     pango-dev \
     libtool \
     autoconf \
-    automake
+    automake \
+    openssl1.1-compat
 
 WORKDIR /usr/src/app
 
