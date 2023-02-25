@@ -1,0 +1,22 @@
+version: '3.3'
+
+services:
+  wpu_bot:
+    image: manh21/wpu_bot
+    restart: unless-stopped
+    environment:
+      - TOKEN=${TOKEN}
+      - CLIENT_ID=${CLIENT_ID}
+      - PREFIX=${PREFIX}
+      - ROLE=${ROLE}
+      - ROLES_STAFF=${ROLES_STAFF}
+      - ROLE_KETUA=${ROLE_KETUA}
+      - ROLE_BELLSHADE=${ROLE_BELLSHADE}
+      - GUILD_ID=${GUILD_ID}
+      - WEBHOOK_ID=${WEBHOOK_ID}
+      - CHANNEL_LOBBY=${CHANNEL_LOBBY}
+      - CHANNEL_PERKENALAN=${CHANNEL_PERKENALAN}
+      - CHANNEL_SHOWCASE_PROJECT=${CHANNEL_SHOWCASE_PROJECT}
+      - CHANNEL_SHOWCASE_WORKSPACE=${CHANNEL_SHOWCASE_WORKSPACE}
+      - ROLES_MAHASISWA=${ROLES_MAHASISWA}
+      - DATABASE_URL=${DATABASE_URL}
