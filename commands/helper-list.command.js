@@ -31,7 +31,9 @@ exports.execute = async (interaction) => {
             let totalMember = 0;
 
             allHelperRoles.forEach((helperRole) => {
-                totalMember += interaction.guild.roles.cache.get(helperRole.role_id).members.size;
+                totalMember += interaction.guild.roles.cache
+                    .get(helperRole.role_id)
+                    .members.filter((member) => filterOutAdmin(member)).size;
             });
 
             const allHelperEmbed = new MessageEmbed()
