@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Client, Intents, Collection } = require('discord.js');
 
-const { PrismaClient }= require('@prisma/client');
+const { PrismaClient } = require('@prisma/client');
 const fs = require('fs');
 const TOKEN = process.env.TOKEN;
 const options = {
@@ -12,7 +12,7 @@ const options = {
         Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
         Intents.FLAGS.GUILD_PRESENCES,
-        Intents.FLAGS.GUILD_WEBHOOKS
+        Intents.FLAGS.GUILD_WEBHOOKS,
     ],
     allowedMentions: {
         parse: ['users', 'roles'],

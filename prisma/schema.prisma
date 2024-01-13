@@ -18,39 +18,45 @@ model messages {
 }
 
 model perkenalan {
-  id                            BigInt   @id @default(autoincrement())
-  author_id                     String?  @db.VarChar(255)
-  channel_id                    String?  @db.VarChar(255)
-  message_id                    String?  @db.VarChar(255)
-  message_content               String?  @db.LongText
-  nama                          String?  @db.Text
-  asal                          String?  @db.Text
-  sekolah                       String?  @db.Text
-  bekerja                       String?  @db.Text
-  referal                       String?  @db.Text
-  favorite_programing_language  String?  @db.Text
-  hobby                         String?  @db.Text
+  id                           BigInt  @id @default(autoincrement())
+  author_id                    String? @db.VarChar(255)
+  channel_id                   String? @db.VarChar(255)
+  message_id                   String? @db.VarChar(255)
+  message_content              String? @db.LongText
+  nama                         String? @db.Text
+  asal                         String? @db.Text
+  sekolah                      String? @db.Text
+  bekerja                      String? @db.Text
+  referal                      String? @db.Text
+  favorite_programing_language String? @db.Text
+  hobby                        String? @db.Text
 }
 
 model point {
-  id          BigInt   @id @default(autoincrement())
-  ketua_id    String   @unique
-  ketua_name  String?  @db.VarChar(255)
-  ketua_point Int  
-  author_name String?  @db.VarChar(255)
-  author_id   String?  @db.VarChar(255)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  id          BigInt          @id @default(autoincrement())
+  ketua_id    String          @unique
+  ketua_name  String?         @db.VarChar(255)
+  ketua_point Int
+  author_name String?         @db.VarChar(255)
+  author_id   String?         @db.VarChar(255)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now()) @updatedAt
   point_log   point_history[]
 }
 
 model point_history {
-  id        BigInt    @id @default(autoincrement())
+  id        BigInt   @id @default(autoincrement())
   point_id  BigInt
   change    String
-  reason    String?   @db.Text
-  author_id String    @db.VarChar(255)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  point     point     @relation(fields: [point_id], references: [id], onDelete: Cascade)
+  reason    String?  @db.Text
+  author_id String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  point     point    @relation(fields: [point_id], references: [id], onDelete: Cascade)
+}
+
+model helper_role {
+  id       BigInt @id @default(autoincrement())
+  role_id  String @unique @db.VarChar(255)
+  added_by String @db.VarChar(255)
 }
