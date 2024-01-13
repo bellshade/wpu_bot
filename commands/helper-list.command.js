@@ -95,16 +95,16 @@ exports.execute = async (interaction) => {
 
         const listMembers = members.length
             ? members
-                  .sort((a, b) => a.joinedDate - b.joinedDate)
-                  .map((member) => {
-                      const joinedDate = member.joinedDate ? new Date(member.joinedDate).toLocaleString() : 'No data';
-                      const lastMessageDate = member.lastMessageDate
-                          ? new Date(member.lastMessageDate).toLocaleString()
-                          : 'No message';
+                .sort((a, b) => a.joinedDate - b.joinedDate)
+                .map((member) => {
+                    const joinedDate = member.joinedDate ? new Date(member.joinedDate).toLocaleString() : 'No data';
+                    const lastMessageDate = member.lastMessageDate
+                        ? new Date(member.lastMessageDate).toLocaleString()
+                        : 'No message';
 
-                      return `${joinedDate} - <@${member.id}> - ${lastMessageDate} - ${member.lastMessageCountIn30Days} messages`;
-                  })
-                  .join('\n')
+                    return `${joinedDate} - <@${member.id}> - ${lastMessageDate} - ${member.lastMessageCountIn30Days} messages`;
+                })
+                .join('\n')
             : 'No one here :(';
         const embed = new MessageEmbed().setColor('#992d22').setDescription(`**<@&${role.id}>**`).addFields(
             { name: 'Total Members', value: roleMemberIds.length.toString(), inline: true },
