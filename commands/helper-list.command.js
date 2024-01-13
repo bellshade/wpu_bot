@@ -17,6 +17,8 @@ exports.permissions = [
     },
 ];
 
+const filterOutAdmin = (member) => !member.roles.cache.some((role) => JSON.parse(process.env.ROLE).includes(role.id));
+
 exports.execute = async (interaction) => {
     await interaction.deferReply();
 
@@ -45,7 +47,8 @@ exports.execute = async (interaction) => {
                     const roleName = interaction.guild.roles.cache.get(helperRole.role_id).name;
                     const members = interaction.guild.roles.cache
                         .get(helperRole.role_id)
-                        .members.map((member) => member.user.id);
+                        .members.filter((member) => filterOutAdmin(member))
+                        .map((member) => member.user.id);
                     const listMembers = members.length
                         ? members.map((member) => `- <@${member}>`).join('\n')
                         : '- No one here :(';
@@ -62,7 +65,10 @@ exports.execute = async (interaction) => {
             return await interaction.editReply({ content: 'Role not found!' });
         }
 
-        const roleMemberIds = interaction.guild.roles.cache.get(role.id).members.map((member) => member.user.id);
+        const roleMemberIds = interaction.guild.roles.cache
+            .get(role.id)
+            .members.filter((member) => filterOutAdmin(member))
+            .map((member) => member.user.id);
         const members = await Promise.all(
             roleMemberIds.map(async (memberId) => {
                 const [firstMessage, lastMessage, lastMessageCountIn30Days] = await Promise.all([
