@@ -6,6 +6,6 @@ module.exports = {
     execute(guildMember) {
         const client = guildMember.client;
 
-        Join(guildMember, client);
+        // Join(guildMember, client);
     },
 };
